@@ -27,9 +27,9 @@ pub fn insert_supply(tables: &mut Tables, clock: &Clock, db_op: &DbOp, transacti
 
     // removal of balance typically handled by `close` action
     // https://github.com/eosnetworkfoundation/eos-system-contracts/blob/8ecd1ac6d312085279cafc9c1a5ade6affc886da/contracts/eosio.token/src/eosio.token.cpp#L182
-    if db_op.operation() == Operation::Remove {
-        tables.delete_row("Supply", &key);
-    }
+    // if db_op.operation() == Operation::Remove {
+    //     tables.delete_row("Supply", &key);
+    // }
 
     // decoded
     let old_data = decode::<abi::types::Account>(&db_op.old_data_json).ok();
@@ -75,10 +75,10 @@ pub fn insert_supply(tables: &mut Tables, clock: &Clock, db_op: &DbOp, transacti
         // pointers
         .set("block", clock.id.as_str())
         // pointers for Antelope Transactions
-        .set("transaction", tx_hash)
-        .set("action", action_key)
-        .set("token", token)
-        .set("dbOp", db_op)
+        // .set("transaction", tx_hash)
+        // .set("action", action_key)
+        // .set("token", token)
+        // .set("dbOp", db_op)
         // balance
         .set("supply", supply.to_string())
         .set("code", code)

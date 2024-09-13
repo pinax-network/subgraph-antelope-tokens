@@ -34,5 +34,4 @@ type Block @entity {
   number:             BigInt!
   previous:           String!
   producer:           String!
-  transactions:       [Transaction!]! @derivedFrom(field: "block")
 }

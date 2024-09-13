@@ -11,19 +11,20 @@ use crate::keys::{action_key, balance_key, db_ops_key, token_key};
 
 // https://github.com/pinax-network/firehose-antelope/blob/534ca5bf2aeda67e8ef07a1af8fc8e0fe46473ee/proto/sf/antelope/type/v1/type.proto#L702
 // https://github.com/eosnetworkfoundation/eos-system-contracts/blob/8ecd1ac6d312085279cafc9c1a5ade6affc886da/contracts/eosio.token/include/eosio.token/eosio.token.hpp#L156-L160
-pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp, transaction: &TransactionTrace, index: u32) {
+pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp, transaction: &TransactionTrace, index: u32) -> bool {
     // db_op
     let code = db_op.code.as_str();
     let scope = db_op.scope.as_str();
     let table_name = db_op.table_name.as_str();
-    let primary_key = db_op.primary_key.as_str();
+    // let primary_key = db_op.primary_key.as_str();
+    let raw_primary_key = Name::from(db_op.primary_key.as_str()).value;
+    let symcode = SymbolCode::from(raw_primary_key);
+    let key = balance_key(&code, scope, &symcode);
 
     // balance rows are typically stored in the "accounts" table
     if table_name != "accounts" {
-        return;
+        return false;
     }
-
-    let key = balance_key(&code, scope, primary_key);
 
     // removal of balance typically handled by `close` action
     // https://github.com/eosnetworkfoundation/eos-system-contracts/blob/8ecd1ac6d312085279cafc9c1a5ade6affc886da/contracts/eosio.token/src/eosio.token.cpp#L182
@@ -52,7 +53,7 @@ pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp, transact
 
     // no balance changes
     if old_balance.is_none() && new_balance.is_none() {
-        return;
+        return false;
     }
 
     let raw_primary_key = Name::from(db_op.primary_key.as_str()).value;
@@ -87,4 +88,5 @@ pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp, transact
         .set_bigint("precision", &precision.to_string())
         .set_bigdecimal("value", &balance.value().to_string())
         .set_bigint_or_zero("amount", &balance.amount.to_string());
+    return true;
 }

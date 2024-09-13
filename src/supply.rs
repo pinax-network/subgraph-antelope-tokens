@@ -11,19 +11,19 @@ use crate::keys::{action_key, db_ops_key, supply_key, token_key};
 
 // https://github.com/pinax-network/firehose-antelope/blob/534ca5bf2aeda67e8ef07a1af8fc8e0fe46473ee/proto/sf/antelope/type/v1/type.proto#L702
 // https://github.com/eosnetworkfoundation/eos-system-contracts/blob/8ecd1ac6d312085279cafc9c1a5ade6affc886da/contracts/eosio.token/include/eosio.token/eosio.token.hpp#L162-L168
-pub fn insert_supply(tables: &mut Tables, clock: &Clock, db_op: &DbOp, transaction: &TransactionTrace, index: u32) {
+pub fn insert_supply(tables: &mut Tables, clock: &Clock, db_op: &DbOp, transaction: &TransactionTrace, index: u32) -> bool {
     // db_op
     let code = db_op.code.as_str();
-    let scope = db_op.scope.as_str();
+    // let scope = db_op.scope.as_str();
     let table_name = db_op.table_name.as_str();
-    // let primary_key = db_op.primary_key.as_str();
+    let raw_primary_key = Name::from(db_op.primary_key.as_str()).value;
+    let symcode = SymbolCode::from(raw_primary_key);
+    let key = supply_key(&code, &symcode);
 
     // supply rows are typically stored in the "stat" table
     if table_name != "stat" {
-        return;
+        return false;
     }
-
-    let key = supply_key(&code, scope);
 
     // removal of balance typically handled by `close` action
     // https://github.com/eosnetworkfoundation/eos-system-contracts/blob/8ecd1ac6d312085279cafc9c1a5ade6affc886da/contracts/eosio.token/src/eosio.token.cpp#L182
@@ -52,7 +52,7 @@ pub fn insert_supply(tables: &mut Tables, clock: &Clock, db_op: &DbOp, transacti
 
     // no balance changes
     if old_supply.is_none() && new_supply.is_none() {
-        return;
+        return false;
     }
 
     let raw_primary_key = Name::from(db_op.primary_key.as_str()).value;
@@ -86,4 +86,5 @@ pub fn insert_supply(tables: &mut Tables, clock: &Clock, db_op: &DbOp, transacti
         .set_bigint("precision", &precision.to_string())
         .set_bigdecimal("value", &supply.value().to_string())
         .set_bigint_or_zero("amount", &supply.amount.to_string());
+    return true;
 }

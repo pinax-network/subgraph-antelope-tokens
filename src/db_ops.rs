@@ -53,13 +53,12 @@ pub fn insert_db_op(params: &str, tables: &mut Tables, clock: &Clock, db_op: &Db
     if is_match(collect_db_op_keys(db_op), params) {
         // TABLE::Balance
         if table_name == "accounts" {
-            insert_balance(tables, clock, db_op, transaction, index);
+            return insert_balance(tables, clock, db_op, transaction, index);
         }
         // TABLE::Supply
         if table_name == "stat" {
-            insert_supply(tables, clock, db_op, transaction, index);
+            return insert_supply(tables, clock, db_op, transaction, index);
         }
-        return true;
     }
     return false;
 }

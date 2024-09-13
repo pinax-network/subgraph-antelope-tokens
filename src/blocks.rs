@@ -23,15 +23,15 @@ pub fn insert_blocks(params: &str, tables: &mut Tables, clock: &Clock, block: &B
     let block_hash = clock.id.as_str();
 
     // TABLE::Transaction
-    let mut is_match = false;
+    let mut is_matched = false;
     for transaction in block.transaction_traces() {
         if insert_transaction(&params, tables, clock, &transaction) {
-            is_match = true;
+            is_matched = true;
         }
     }
 
     // TABLE::Block
-    if is_match {
+    if is_matched {
         tables
             .create_row("Block", block_hash)
             .set("previous", previous)

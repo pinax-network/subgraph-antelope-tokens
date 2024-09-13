@@ -1,0 +1,17 @@
+specVersion: 1.2.0
+description: EOS Tokens Balances & Supply
+repository: https://github.com/pinax-network/subgraph-antelope-tokens
+schema:
+  file: ../../schema.graphql
+dataSources:
+  - kind: substreams
+    name: eos_tokens
+    network: eos
+    source:
+      startBlock: 390796092
+      package:
+        moduleName: graph_out
+        file: ../../antelope-tokens-v0.4.0.spkg
+    mapping:
+      kind: substreams/graph-entities
+      apiVersion: 0.0.5

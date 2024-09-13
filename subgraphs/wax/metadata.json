@@ -1,0 +1,10 @@
+{
+    "name": "WAX Tokens",
+    "displayName": "WAX Tokens",
+    "description": "WAX Tokens, Balances",
+    "image": "ipfs://QmPnzfU9C7WPzQZUZT6VuxSNyt1fCfd2EVW5bC7h9rwqwn",
+    "subgraphImage": "https://api.thegraph.com/ipfs/api/v0/cat?arg=QmPnzfU9C7WPzQZUZT6VuxSNyt1fCfd2EVW5bC7h9rwqwn",
+    "codeRepository": "https://github.com/pinax-network/subgraph-antelope-tokens",
+    "website": "https://pinax.network",
+    "categories": null
+}

@@ -1,0 +1,38 @@
+type Balance @entity {
+  id:                 ID!
+  owner:              String!
+  balance:            String!
+  code:               String!
+  symcode:            String!
+  precision:          BigInt!
+  value:              BigDecimal!
+  amount:             BigInt!
+
+  # derived fields
+  block:              Block!
+}
+
+type Supply @entity {
+  id:                 ID!
+  code:               String!
+  supply:             String!
+  symcode:            String!
+  precision:          BigInt!
+  value:              BigDecimal!
+  amount:             BigInt!
+
+  # derived fields
+  block:              Block!
+}
+
+type Block @entity {
+  id:                 ID!
+  date:               String!
+  month:              String!
+  year:               String!
+  timestamp:          Timestamp!
+  number:             BigInt!
+  previous:           String!
+  producer:           String!
+  transactions:       [Transaction!]! @derivedFrom(field: "block")
+}

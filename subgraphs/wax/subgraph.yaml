@@ -1,0 +1,17 @@
+specVersion: 1.2.0
+description: WAX Tokens Balances & Supply
+repository: https://github.com/pinax-network/subgraph-antelope-tokens
+schema:
+  file: ../../schema.graphql
+dataSources:
+  - kind: substreams
+    name: wax_tokens
+    network: wax
+    source:
+      startBlock: 329322513
+      package:
+        moduleName: graph_out
+        file: ../../antelope-tokens-v0.4.0.spkg
+    mapping:
+      kind: substreams/graph-entities
+      apiVersion: 0.0.5

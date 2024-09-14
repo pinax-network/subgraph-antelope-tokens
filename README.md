@@ -28,17 +28,17 @@
 ## GraphQL
 
 ```graphql
-{
-  balances(
-    where: {owner: "myaccount", code: "eosio.token"}
-  ) {
-    block{
-      number
-      time
+query{
+  tokens(where:{supply_:{amount_gt: 0}}){
+    code
+    symcode
+    supply{
+      value
     }
-    owner
-    balance
-    amount
+    balances(first: 5,orderBy:amount, orderDirection:desc){
+      owner
+      value
+    }
   }
 }
 ```

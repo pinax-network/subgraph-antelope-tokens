@@ -37,16 +37,16 @@ pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> Optio
     }
 
     // decoded
-    let old_data = decode::<abi::types::Account>(&db_op.old_data_json).ok();
+    // let old_data = decode::<abi::types::Account>(&db_op.old_data_json).ok();
     let new_data = decode::<abi::types::Account>(&db_op.new_data_json).ok();
 
-    let old_balance = old_data.as_ref().and_then(|data| match data.balance.parse::<Asset>() {
-        Ok(asset) => Some(asset),
-        Err(e) => {
-            log::info!("Error parsing old balance asset in block {}: {:?}", clock.number, e);
-            None
-        }
-    });
+    // let old_balance = old_data.as_ref().and_then(|data| match data.balance.parse::<Asset>() {
+    //     Ok(asset) => Some(asset),
+    //     Err(e) => {
+    //         log::info!("Error parsing old balance asset in block {}: {:?}", clock.number, e);
+    //         None
+    //     }
+    // });
     let new_balance = new_data.as_ref().and_then(|data| match data.balance.parse::<Asset>() {
         Ok(asset) => Some(asset),
         Err(e) => {
@@ -60,9 +60,9 @@ pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> Optio
         return None;
     }
 
-    let precision = new_balance.unwrap_or_else(|| old_balance.unwrap()).symbol.precision();
+    let balance = new_balance.unwrap();
+    let precision = balance.symbol.precision();
     let sym = Symbol::from_precision(symcode, precision);
-    let balance = new_balance.unwrap_or_else(|| Asset::from_amount(0, sym));
 
     // TABLE::Balance
     tables

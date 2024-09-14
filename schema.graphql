@@ -32,6 +32,16 @@ type Supply @entity {
   token:              Token!
 }
 
+type MaxSupply @entity {
+  id:                 ID!
+  amount:             BigInt!
+  value:              BigDecimal!
+
+  # derived fields
+  block:              Block!
+  token:              Token!
+}
+
 type Block @entity {
   id:                 ID!
   date:               String!

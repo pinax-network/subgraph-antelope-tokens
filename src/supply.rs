@@ -34,16 +34,9 @@ pub fn insert_supply(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> Option
     }
 
     // decoded
-    let old_data = decode::<abi::types::CurrencyStats>(&db_op.old_data_json).ok();
+    // let old_data = decode::<abi::types::CurrencyStats>(&db_op.old_data_json).ok();
     let new_data = decode::<abi::types::CurrencyStats>(&db_op.new_data_json).ok();
 
-    let old_supply = old_data.as_ref().and_then(|data| match data.supply.parse::<Asset>() {
-        Ok(asset) => Some(asset),
-        Err(e) => {
-            log::info!("Error parsing old supply asset in block {}: {:?}", clock.number, e);
-            None
-        }
-    });
     let new_supply = new_data.as_ref().and_then(|data| match data.supply.parse::<Asset>() {
         Ok(asset) => Some(asset),
         Err(e) => {
@@ -52,16 +45,25 @@ pub fn insert_supply(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> Option
         }
     });
 
+    let new_max_supply = new_data.as_ref().and_then(|data| match data.max_supply.parse::<Asset>() {
+        Ok(asset) => Some(asset),
+        Err(e) => {
+            log::info!("Error parsing new supply asset in block {}: {:?}", clock.number, e);
+            None
+        }
+    });
+
     // supply has been removed
-    if new_supply.is_none() {
+    if new_supply.is_none() || new_max_supply.is_none() {
         return None;
     }
 
     let raw_primary_key = Name::from(db_op.primary_key.as_str()).value;
     let symcode = SymbolCode::from(raw_primary_key);
-    let precision = new_supply.unwrap_or_else(|| old_supply.unwrap()).symbol.precision();
+    let supply = new_supply.as_ref().expect("supply is missing");
+    let max_supply = new_max_supply.as_ref().expect("max_supply is missing");
+    let precision = supply.symbol.precision();
     let sym = Symbol::from_precision(symcode, precision);
-    let supply = new_supply.unwrap_or_else(|| Asset::from_amount(0, sym));
 
     // TABLE::Supply
     tables
@@ -72,6 +74,16 @@ pub fn insert_supply(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> Option
         // supply
         .set_bigdecimal("value", &supply.value().to_string())
         .set_bigint_or_zero("amount", &supply.amount.to_string());
+
+    // TABLE::MaxSupply
+    tables
+        .create_row("MaxSupply", token.as_str())
+        // pointers
+        .set("block", clock.id.as_str())
+        .set("token", token.as_str())
+        // max supply
+        .set_bigdecimal("value", &max_supply.value().to_string())
+        .set_bigint_or_zero("amount", &max_supply.amount.to_string());
 
     return Some(Token {
         key: token.to_string(),

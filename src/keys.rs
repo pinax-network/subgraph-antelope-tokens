@@ -9,5 +9,5 @@ pub fn balance_key(owner: &str, token: &str) -> String {
 }
 
 pub fn token_key(symcode: &SymbolCode, code: &str) -> String {
-    format!("{}@{}", symcode.to_string(), code)
+    format!("{}:{}", symcode.to_string(), code)
 }

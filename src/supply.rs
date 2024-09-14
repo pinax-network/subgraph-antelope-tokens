@@ -3,7 +3,7 @@ use substreams::log;
 use substreams::pb::substreams::Clock;
 use substreams_antelope::decoder::decode;
 use substreams_antelope::pb::db_op::Operation;
-use substreams_antelope::pb::{DbOp, TransactionTrace};
+use substreams_antelope::pb::DbOp;
 use substreams_entity_change::tables::Tables;
 
 use crate::abi;
@@ -11,7 +11,7 @@ use crate::keys::token_key;
 
 // https://github.com/pinax-network/firehose-antelope/blob/534ca5bf2aeda67e8ef07a1af8fc8e0fe46473ee/proto/sf/antelope/type/v1/type.proto#L702
 // https://github.com/eosnetworkfoundation/eos-system-contracts/blob/8ecd1ac6d312085279cafc9c1a5ade6affc886da/contracts/eosio.token/include/eosio.token/eosio.token.hpp#L162-L168
-pub fn insert_supply(tables: &mut Tables, clock: &Clock, db_op: &DbOp, transaction: &TransactionTrace, index: u32) {
+pub fn insert_supply(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> bool {
     // db_op
     let code = db_op.code.as_str();
     let raw_primary_key = Name::from(db_op.primary_key.as_str()).value;
@@ -39,21 +39,21 @@ pub fn insert_supply(tables: &mut Tables, clock: &Clock, db_op: &DbOp, transacti
     let old_supply = old_data.as_ref().and_then(|data| match data.supply.parse::<Asset>() {
         Ok(asset) => Some(asset),
         Err(e) => {
-            log::info!("Error parsing old supply asset in transaction {}: {:?}", transaction.id, e);
+            log::info!("Error parsing old supply asset in block {}: {:?}", clock.number, e);
             None
         }
     });
     let new_supply = new_data.as_ref().and_then(|data| match data.supply.parse::<Asset>() {
         Ok(asset) => Some(asset),
         Err(e) => {
-            log::info!("Error parsing new supply asset in transaction {}: {:?}", transaction.id, e);
+            log::info!("Error parsing new supply asset in block {}: {:?}", clock.number, e);
             None
         }
     });
 
-    // no balance changes
-    if old_supply.is_none() && new_supply.is_none() {
-        return;
+    // supply has been removed
+    if new_supply.is_none() {
+        return false;
     }
 
     let raw_primary_key = Name::from(db_op.primary_key.as_str()).value;
@@ -71,4 +71,17 @@ pub fn insert_supply(tables: &mut Tables, clock: &Clock, db_op: &DbOp, transacti
         // supply
         .set_bigdecimal("value", &supply.value().to_string())
         .set_bigint_or_zero("amount", &supply.amount.to_string());
+
+    // TABLE::Token
+    tables
+        .create_row("Token", token.as_str())
+        // pointers
+        .set("block", clock.id.as_str())
+        // Token
+        .set("code", code)
+        .set("symcode", symcode.to_string())
+        .set("sym", sym.to_string())
+        .set_bigint_or_zero("precision", &precision.to_string());
+
+    return true;
 }

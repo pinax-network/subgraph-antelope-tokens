@@ -3,7 +3,7 @@ use substreams::log;
 use substreams::pb::substreams::Clock;
 use substreams_antelope::decoder::decode;
 use substreams_antelope::pb::db_op::Operation;
-use substreams_antelope::pb::{DbOp, TransactionTrace};
+use substreams_antelope::pb::DbOp;
 use substreams_entity_change::tables::Tables;
 
 use crate::abi;
@@ -11,7 +11,7 @@ use crate::keys::{balance_key, token_key};
 
 // https://github.com/pinax-network/firehose-antelope/blob/534ca5bf2aeda67e8ef07a1af8fc8e0fe46473ee/proto/sf/antelope/type/v1/type.proto#L702
 // https://github.com/eosnetworkfoundation/eos-system-contracts/blob/8ecd1ac6d312085279cafc9c1a5ade6affc886da/contracts/eosio.token/include/eosio.token/eosio.token.hpp#L156-L160
-pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp, transaction: &TransactionTrace, index: u32) {
+pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> bool {
     // db_op
     let code = db_op.code.as_str();
     let owner = db_op.scope.as_str();
@@ -42,21 +42,21 @@ pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp, transact
     let old_balance = old_data.as_ref().and_then(|data| match data.balance.parse::<Asset>() {
         Ok(asset) => Some(asset),
         Err(e) => {
-            log::info!("Error parsing old balance asset in transaction {}: {:?}", transaction.id, e);
+            log::info!("Error parsing old balance asset in block {}: {:?}", clock.number, e);
             None
         }
     });
     let new_balance = new_data.as_ref().and_then(|data| match data.balance.parse::<Asset>() {
         Ok(asset) => Some(asset),
         Err(e) => {
-            log::info!("Error parsing new balance asset in transaction {}: {:?}", transaction.id, e);
+            log::info!("Error parsing new balance asset in block {}: {:?}", clock.number, e);
             None
         }
     });
 
-    // no balance changes
-    if old_balance.is_none() && new_balance.is_none() {
-        return;
+    // balance has been removed
+    if new_balance.is_none() {
+        return false;
     }
 
     let precision = new_balance.unwrap_or_else(|| old_balance.unwrap()).symbol.precision();
@@ -73,4 +73,6 @@ pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp, transact
         .set("owner", owner)
         .set_bigdecimal("value", &balance.value().to_string())
         .set_bigint_or_zero("amount", &balance.amount.to_string());
+
+    return true;
 }

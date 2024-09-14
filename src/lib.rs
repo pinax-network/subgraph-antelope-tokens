@@ -6,5 +6,4 @@ mod index;
 mod keys;
 mod sinks;
 mod supply;
-mod transactions;
 mod utils;

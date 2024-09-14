@@ -16,9 +16,6 @@ fn index_blocks(block: Block) -> Result<Keys, substreams::errors::Error> {
     let mut keys = HashSet::new();
     keys.insert("*".to_string()); // allows wildcard search
     for transaction in block.transaction_traces() {
-        for trace in transaction.action_traces.iter() {
-            keys.extend(collect_action_keys(trace));
-        }
         for db_op in transaction.db_ops.iter() {
             keys.extend(collect_db_op_keys(db_op));
         }

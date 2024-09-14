@@ -7,30 +7,33 @@ use substreams_antelope::pb::{DbOp, TransactionTrace};
 use substreams_entity_change::tables::Tables;
 
 use crate::abi;
-use crate::keys::{action_key, balance_key, db_ops_key, token_key};
+use crate::keys::{balance_key, token_key};
 
 // https://github.com/pinax-network/firehose-antelope/blob/534ca5bf2aeda67e8ef07a1af8fc8e0fe46473ee/proto/sf/antelope/type/v1/type.proto#L702
 // https://github.com/eosnetworkfoundation/eos-system-contracts/blob/8ecd1ac6d312085279cafc9c1a5ade6affc886da/contracts/eosio.token/include/eosio.token/eosio.token.hpp#L156-L160
-pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp, transaction: &TransactionTrace, index: u32) -> bool {
+pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp, transaction: &TransactionTrace, index: u32) {
     // db_op
     let code = db_op.code.as_str();
-    let scope = db_op.scope.as_str();
-    let table_name = db_op.table_name.as_str();
-    // let primary_key = db_op.primary_key.as_str();
+    let owner = db_op.scope.as_str();
     let raw_primary_key = Name::from(db_op.primary_key.as_str()).value;
     let symcode = SymbolCode::from(raw_primary_key);
-    let key = balance_key(&code, scope, &symcode);
-
-    // balance rows are typically stored in the "accounts" table
-    if table_name != "accounts" {
-        return false;
-    }
+    let token = token_key(&symcode, code);
+    let key = balance_key(&owner, &token);
 
     // removal of balance typically handled by `close` action
     // https://github.com/eosnetworkfoundation/eos-system-contracts/blob/8ecd1ac6d312085279cafc9c1a5ade6affc886da/contracts/eosio.token/src/eosio.token.cpp#L182
-    // if db_op.operation() == Operation::Remove {
-    //     tables.delete_row("Balance", &key);
-    // }
+    if db_op.operation() == Operation::Remove {
+        // TABLE::Balance
+        tables
+            .create_row("Balance", token.as_str())
+            // pointers
+            .set("block", clock.id.as_str())
+            .set("token", token.as_str())
+            .set("owner", owner)
+            // balance
+            .set_bigdecimal("value", &0.to_string())
+            .set_bigint_or_zero("amount", &0.to_string());
+    }
 
     // decoded
     let old_data = decode::<abi::types::Account>(&db_op.old_data_json).ok();
@@ -53,40 +56,21 @@ pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp, transact
 
     // no balance changes
     if old_balance.is_none() && new_balance.is_none() {
-        return false;
+        return;
     }
 
-    let raw_primary_key = Name::from(db_op.primary_key.as_str()).value;
-    let symcode = SymbolCode::from(raw_primary_key);
     let precision = new_balance.unwrap_or_else(|| old_balance.unwrap()).symbol.precision();
     let sym = Symbol::from_precision(symcode, precision);
     let balance = new_balance.unwrap_or_else(|| Asset::from_amount(0, sym));
-    // let balance_delta = balance.amount - old_balance.unwrap_or_else(|| Asset::from_amount(0, sym)).amount;
-
-    // pointers
-    let tx_hash = transaction.id.as_str();
-    let action_index = db_op.action_index;
-    let token = token_key(&sym, code);
-    let db_op = db_ops_key(tx_hash, action_index, index);
 
     // TABLE::Balance
-    let action_key = action_key(tx_hash, action_index);
     tables
         .create_row("Balance", key)
         // pointers
         .set("block", clock.id.as_str())
-        // pointers for Antelope Transactions
-        // .set("transaction", tx_hash)
-        // .set("action", action_key)
-        // .set("token", token)
-        // .set("dbOp", db_op)
+        .set("token", token)
         // balance
-        .set("owner", scope)
-        .set("balance", balance.to_string())
-        .set("code", code)
-        .set("symcode", sym.code().to_string())
-        .set_bigint("precision", &precision.to_string())
+        .set("owner", owner)
         .set_bigdecimal("value", &balance.value().to_string())
         .set_bigint_or_zero("amount", &balance.amount.to_string());
-    return true;
 }

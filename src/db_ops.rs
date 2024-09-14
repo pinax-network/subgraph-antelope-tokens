@@ -47,18 +47,17 @@ pub fn collapse_db_ops(transaction: &TransactionTrace) -> Vec<DbOpExt> {
 }
 
 // https://github.com/streamingfast/firehose-ethereum/blob/1bcb32a8eb3e43347972b6b5c9b1fcc4a08c751e/proto/sf/ethereum/type/v2/type.proto#L647
-pub fn insert_db_op(params: &str, tables: &mut Tables, clock: &Clock, db_op: &DbOp, transaction: &TransactionTrace, index: u32) -> bool {
+pub fn insert_db_op(params: &str, tables: &mut Tables, clock: &Clock, db_op: &DbOp, transaction: &TransactionTrace, index: u32) {
     let table_name = db_op.table_name.as_str();
 
     if is_match(collect_db_op_keys(db_op), params) {
         // TABLE::Balance
         if table_name == "accounts" {
-            return insert_balance(tables, clock, db_op, transaction, index);
+            insert_balance(tables, clock, db_op, transaction, index);
         }
         // TABLE::Supply
         if table_name == "stat" {
-            return insert_supply(tables, clock, db_op, transaction, index);
+            insert_supply(tables, clock, db_op, transaction, index);
         }
     }
-    return false;
 }

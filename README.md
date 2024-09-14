@@ -6,7 +6,7 @@
 > [`sf.antelope.type.v1.Block`](https://buf.build/pinax/firehose-antelope/docs/main:sf.antelope.type.v1)
 
 - [x] **Balances**
-- [x] **Supply**
+- [x] **Supply** & **Max Supply**
 
 ## Chains
 
@@ -27,16 +27,40 @@
 
 ## GraphQL
 
+**Balances by Owner**
+
 ```graphql
-query{
-  tokens(where:{supply_:{amount_gt: 0}}){
+query BalanceByOwner{
+  balances(
+    orderBy:block__number, orderDirection:desc,
+    where:{owner:"swap.alcor"}) {
+    token{
+      code
+      symcode
+      precision
+    }
+    amount
+  }
+}
+```
+
+**Tokens by Top Holders**
+
+```graphql
+query Tokens{
+  tokens(first:20, orderBy:block__number, orderDirection:desc,
+  where:{supply_:{ amount_gte:0 }}){
     code
-    symcode
-    supply{
+    sym
+    block{
+      timestamp
+      number
+    }
+    balances(first:5, orderBy:amount, orderDirection:desc){
+      owner
       value
     }
-    balances(first: 5,orderBy:amount, orderDirection:desc){
-      owner
+    supply{
       value
     }
   }

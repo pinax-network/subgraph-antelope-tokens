@@ -14,7 +14,7 @@ type Token @entity {
   code:               String!
   symcode:            String!
   sym:                String!
-  precision:          BigInt!
+  precision:          Int8!
 
   # derived fields
   block:              Block!

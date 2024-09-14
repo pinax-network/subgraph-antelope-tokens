@@ -8,7 +8,8 @@ dataSources:
     name: wax_tokens
     network: wax
     source:
-      startBlock: 329322513
+      # startBlock: 266683669 # 1 year ago
+      startBlock: 329406258 # 1 year ago
       package:
         moduleName: graph_out
         file: ../../antelope-tokens-v0.1.0.spkg

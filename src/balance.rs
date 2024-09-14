@@ -8,10 +8,11 @@ use substreams_entity_change::tables::Tables;
 
 use crate::abi;
 use crate::keys::{balance_key, token_key};
+use crate::tokens::Token;
 
 // https://github.com/pinax-network/firehose-antelope/blob/534ca5bf2aeda67e8ef07a1af8fc8e0fe46473ee/proto/sf/antelope/type/v1/type.proto#L702
 // https://github.com/eosnetworkfoundation/eos-system-contracts/blob/8ecd1ac6d312085279cafc9c1a5ade6affc886da/contracts/eosio.token/include/eosio.token/eosio.token.hpp#L156-L160
-pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> bool {
+pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> Option<Token> {
     // db_op
     let code = db_op.code.as_str();
     let owner = db_op.scope.as_str();
@@ -56,7 +57,7 @@ pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> bool 
 
     // balance has been removed
     if new_balance.is_none() {
-        return false;
+        return None;
     }
 
     let precision = new_balance.unwrap_or_else(|| old_balance.unwrap()).symbol.precision();
@@ -68,11 +69,16 @@ pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> bool 
         .create_row("Balance", key)
         // pointers
         .set("block", clock.id.as_str())
-        .set("token", token)
+        .set("token", token.as_str())
         // balance
         .set("owner", owner)
         .set_bigdecimal("value", &balance.value().to_string())
         .set_bigint_or_zero("amount", &balance.amount.to_string());
 
-    return true;
+    return Some(Token {
+        key: token.to_string(),
+        clock: clock.clone(),
+        code: code.to_string(),
+        sym: sym,
+    });
 }

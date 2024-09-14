@@ -5,8 +5,10 @@ use substreams::pb::substreams::Clock;
 use substreams_antelope::{pb::DbOp, Block};
 use substreams_entity_change::tables::Tables;
 
+#[derive(Debug, Clone)]
 pub struct DbOpExt {
     pub index: u32,
+    pub transaction_id: String,
     pub db_op: DbOp,
 }
 
@@ -15,9 +17,10 @@ use crate::{
     index::{collect_db_op_keys, is_match},
     keys::db_ops_table_key,
     supply::insert_supply,
+    tokens::Token,
 };
 
-pub fn collapse_db_ops_by_block(block: &Block, table_names: Vec<&str>) -> Vec<DbOpExt> {
+pub fn collapse_db_ops_by_block(block: &Block) -> Vec<DbOpExt> {
     let mut collapsed_db_ops: HashMap<String, DbOpExt> = HashMap::new();
     let mut index = 0;
     for transaction in block.transaction_traces() {
@@ -28,14 +31,16 @@ pub fn collapse_db_ops_by_block(block: &Block, table_names: Vec<&str>) -> Vec<Db
             let primary_key = db_op.primary_key.as_str();
             let table_key = db_ops_table_key(code, scope, table_name, primary_key);
 
-            // skip db ops that are not in table_names
-            if !table_names.is_empty() && !table_names.contains(&table_name) {
-                continue;
-            }
-
             // first db ops, no need to inherit from previous db ops
             if !collapsed_db_ops.contains_key(&table_key) {
-                collapsed_db_ops.insert(table_key, DbOpExt { db_op: db_op.clone(), index });
+                collapsed_db_ops.insert(
+                    table_key,
+                    DbOpExt {
+                        transaction_id: transaction.id.clone(),
+                        db_op: db_op.clone(),
+                        index,
+                    },
+                );
             // inherit from previous db ops
             // new_data and new_data_json are updated
             } else {
@@ -54,7 +59,8 @@ pub fn collapse_db_ops_by_block(block: &Block, table_names: Vec<&str>) -> Vec<Db
 }
 
 // https://github.com/streamingfast/firehose-ethereum/blob/1bcb32a8eb3e43347972b6b5c9b1fcc4a08c751e/proto/sf/ethereum/type/v2/type.proto#L647
-pub fn insert_db_op(params: &str, tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> bool {
+pub fn insert_db_op(params: &str, tables: &mut Tables, clock: &Clock, db_op: &DbOpExt) -> Option<Token> {
+    let db_op = &db_op.db_op;
     let table_name = db_op.table_name.as_str();
 
     if is_match(collect_db_op_keys(db_op), params) {
@@ -67,5 +73,5 @@ pub fn insert_db_op(params: &str, tables: &mut Tables, clock: &Clock, db_op: &Db
             return insert_supply(tables, clock, db_op);
         }
     }
-    return false;
+    return None;
 }

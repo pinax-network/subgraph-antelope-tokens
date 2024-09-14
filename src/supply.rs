@@ -8,10 +8,11 @@ use substreams_entity_change::tables::Tables;
 
 use crate::abi;
 use crate::keys::token_key;
+use crate::tokens::Token;
 
 // https://github.com/pinax-network/firehose-antelope/blob/534ca5bf2aeda67e8ef07a1af8fc8e0fe46473ee/proto/sf/antelope/type/v1/type.proto#L702
 // https://github.com/eosnetworkfoundation/eos-system-contracts/blob/8ecd1ac6d312085279cafc9c1a5ade6affc886da/contracts/eosio.token/include/eosio.token/eosio.token.hpp#L162-L168
-pub fn insert_supply(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> bool {
+pub fn insert_supply(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> Option<Token> {
     // db_op
     let code = db_op.code.as_str();
     let raw_primary_key = Name::from(db_op.primary_key.as_str()).value;
@@ -53,7 +54,7 @@ pub fn insert_supply(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> bool {
 
     // supply has been removed
     if new_supply.is_none() {
-        return false;
+        return None;
     }
 
     let raw_primary_key = Name::from(db_op.primary_key.as_str()).value;
@@ -72,16 +73,10 @@ pub fn insert_supply(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> bool {
         .set_bigdecimal("value", &supply.value().to_string())
         .set_bigint_or_zero("amount", &supply.amount.to_string());
 
-    // TABLE::Token
-    tables
-        .create_row("Token", token.as_str())
-        // pointers
-        .set("block", clock.id.as_str())
-        // Token
-        .set("code", code)
-        .set("symcode", symcode.to_string())
-        .set("sym", sym.to_string())
-        .set_bigint_or_zero("precision", &precision.to_string());
-
-    return true;
+    return Some(Token {
+        key: token.to_string(),
+        clock: clock.clone(),
+        code: code.to_string(),
+        sym: sym,
+    });
 }

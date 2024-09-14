@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use substreams::errors::Error;
 use substreams::pb::substreams::Clock;
 use substreams_antelope::pb::Block;
@@ -5,6 +7,7 @@ use substreams_entity_change::pb::entity::EntityChanges;
 
 use crate::blocks::insert_blocks;
 use crate::db_ops::{collapse_db_ops_by_block, insert_db_op};
+use crate::tokens::insert_token;
 
 #[substreams::handlers::map]
 pub fn graph_out(params: String, clock: Clock, block: Block) -> Result<EntityChanges, Error> {
@@ -13,20 +16,25 @@ pub fn graph_out(params: String, clock: Clock, block: Block) -> Result<EntityCha
     // collapse overlapping db_ops per transactions
     // only stores "last token update" per block
     // if multiple db_ops of same token, usually spam related contracts
-    let table_names = vec!["accounts", "stats"];
-    let collapsed_db_ops = collapse_db_ops_by_block(&block, table_names);
+    let collapsed_db_ops = collapse_db_ops_by_block(&block);
 
-    // TABLE::Balance,Token,Supply
-    let mut matched = false;
+    // TABLE::Balance,Supply
+    let mut tokens = HashMap::new();
     for db_op_ext in collapsed_db_ops.iter() {
-        if insert_db_op(&params, &mut tables, &clock, &db_op_ext.db_op) {
-            matched = true;
-        }
+        match insert_db_op(&params, &mut tables, &clock, &db_op_ext) {
+            Some(token) => tokens.insert(token.key.clone(), token),
+            None => None,
+        };
     }
 
     // TABLE::blocks
-    if matched {
+    if !tokens.is_empty() {
         insert_blocks(&mut tables, &clock);
+    }
+
+    // TABLE::Token
+    for token in tokens.values() {
+        insert_token(&mut tables, token);
     }
 
     Ok(tables.to_entity_changes())

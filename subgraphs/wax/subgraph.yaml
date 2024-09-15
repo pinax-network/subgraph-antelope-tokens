@@ -3,6 +3,8 @@ description: WAX Tokens Balances & Supply
 repository: https://github.com/pinax-network/subgraph-antelope-tokens
 schema:
   file: ../../schema.graphql
+indexerHints:
+  prune: auto
 dataSources:
   - kind: substreams
     name: wax_tokens

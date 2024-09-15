@@ -10,15 +10,13 @@ pub fn insert_blocks(tables: &mut Tables, clock: &Clock) {
     let date = block_time_to_date(timestamp.to_string().as_str());
     let month = block_date_to_month(date.as_str());
     let year = block_date_to_year(date.as_str());
-    let block_number = clock.number.to_string();
-    let block_hash = clock.id.as_str();
 
     // TABLE::Block
     tables
-        .create_row("Block", block_hash)
+        .create_row("Block", &clock.id)
         .set("date", date)
         .set("month", month)
         .set("year", year)
         .set("timestamp", timestamp)
-        .set_bigint("number", &block_number.to_string());
+        .set_bigint("number", &clock.number.to_string());
 }

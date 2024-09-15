@@ -1,8 +1,7 @@
 type Balance @entity {
   id:                 ID!
   owner:              String!
-  amount:             BigInt!
-  value:              BigDecimal!
+  balance:            BigInt!
 
   # derived fields
   block:              Block!
@@ -14,29 +13,18 @@ type Token @entity {
   code:               String!
   symcode:            String!
   sym:                String!
-  precision:          Int8!
+  precision:          BigInt!
 
   # derived fields
   block:              Block!
   balances:           [Balance!]! @derivedFrom(field: "token")
   supply:             Supply! @derivedFrom(field: "token")
-  maxSupply:          MaxSupply! @derivedFrom(field: "token")
 }
 
 type Supply @entity {
   id:                 ID!
-  amount:             BigInt!
-  value:              BigDecimal!
-
-  # derived fields
-  block:              Block!
-  token:              Token!
-}
-
-type MaxSupply @entity {
-  id:                 ID!
-  amount:             BigInt!
-  value:              BigDecimal!
+  supply:             BigInt!
+  maxSupply:          BigInt!
 
   # derived fields
   block:              Block!

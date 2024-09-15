@@ -18,22 +18,23 @@ pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> Optio
     let owner = db_op.scope.as_str();
     let raw_primary_key = Name::from(db_op.primary_key.as_str()).value;
     let symcode = SymbolCode::from(raw_primary_key);
-    let token = token_key(&symcode, code);
-    let key = balance_key(&owner, &token);
+    let token = token_key(code, &symcode);
+    let key = balance_key(&token, &owner);
+    let block = clock.id.as_str();
 
-    // removal of balance typically handled by `close` action
+    // // removal of balance typically handled by `close` action
     // https://github.com/eosnetworkfoundation/eos-system-contracts/blob/8ecd1ac6d312085279cafc9c1a5ade6affc886da/contracts/eosio.token/src/eosio.token.cpp#L182
     if db_op.operation() == Operation::Remove {
-        // TABLE::Balance
-        tables
-            .create_row("Balance", token.as_str())
-            // pointers
-            .set("block", clock.id.as_str())
-            .set("token", token.as_str())
-            .set("owner", owner)
-            // balance
-            .set_bigdecimal("value", &0.to_string())
-            .set_bigint_or_zero("amount", &0.to_string());
+        // // TABLE::Balance
+        // tables
+        //     .create_row("Balance", &key)
+        //     // pointers
+        //     .set("block", block)
+        //     .set("token", &token)
+        //     // balance
+        //     .set("owner", owner)
+        //     .set_bigint_or_zero("balance", &0.to_string());
+        return None;
     }
 
     // decoded
@@ -64,16 +65,19 @@ pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> Optio
     let precision = balance.symbol.precision();
     let sym = Symbol::from_precision(symcode, precision);
 
+    if balance.amount == 0 {
+        return None;
+    }
+
     // TABLE::Balance
     tables
         .create_row("Balance", key)
         // pointers
-        .set("block", clock.id.as_str())
-        .set("token", token.as_str())
+        .set("block", block)
+        .set("token", &token)
         // balance
         .set("owner", owner)
-        .set_bigdecimal("value", &balance.value().to_string())
-        .set_bigint_or_zero("amount", &balance.amount.to_string());
+        .set_bigint_or_zero("balance", &balance.amount.to_string());
 
     return Some(Token {
         key: token.to_string(),

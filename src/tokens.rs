@@ -13,7 +13,7 @@ pub struct Token {
 }
 
 pub fn insert_token(tables: &mut Tables, token: &Token) {
-    let key = token_key(&token.sym.code(), &token.code);
+    let key = token_key(&token.code, &token.sym.code());
 
     // TABLE::Token
     tables

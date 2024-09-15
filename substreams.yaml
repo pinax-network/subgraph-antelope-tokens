@@ -37,4 +37,4 @@ modules:
 network: wax
 
 params:
-  graph_out: "*"
+  graph_out: "db.table:accounts || db.table:stat"

@@ -39,7 +39,7 @@ query BalanceByOwner{
       symcode
       precision
     }
-    amount
+    balance
   }
 }
 ```
@@ -47,21 +47,19 @@ query BalanceByOwner{
 **Tokens by Top Holders**
 
 ```graphql
-query Tokens{
+query Tokens {
   tokens(first:20, orderBy:block__number, orderDirection:desc,
-  where:{supply_:{ amount_gte:0 }}){
+    where:{supply_:{supply_gte:0}}){
     code
+    precision
     sym
-    block{
-      timestamp
-      number
-    }
-    balances(first:5, orderBy:amount, orderDirection:desc){
-      owner
-      value
-    }
     supply{
-      value
+      supply
+      maxSupply
+    }
+    balances(first:5, orderBy: balance, orderDirection: desc) {
+      owner
+      balance
     }
   }
 }

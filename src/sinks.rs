@@ -27,14 +27,14 @@ pub fn graph_out(params: String, clock: Clock, block: Block) -> Result<EntityCha
         };
     }
 
-    // TABLE::blocks
-    if !tokens.is_empty() {
-        insert_blocks(&mut tables, &clock);
-    }
-
     // TABLE::Token
     for token in tokens.values() {
         insert_token(&mut tables, token);
+    }
+
+    // TABLE::blocks
+    if !tokens.is_empty() {
+        insert_blocks(&mut tables, &clock);
     }
 
     Ok(tables.to_entity_changes())

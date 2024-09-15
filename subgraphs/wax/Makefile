@@ -8,6 +8,7 @@ build:
 
 .PHONY: deploy
 deploy:
+	graph build
 	graph create --node http://localhost:8020 wax_tokens
 	graph deploy --node=http://localhost:8020 wax_tokens
 

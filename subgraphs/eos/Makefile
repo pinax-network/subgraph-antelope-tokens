@@ -8,9 +8,11 @@ build:
 
 .PHONY: deploy
 deploy:
+	graph build
 	graph create --node http://localhost:8020 eos_tokens
 	graph deploy --node=http://localhost:8020 eos_tokens
 
 .PHONY: publish
 publish:
-	graph publish --subgraph-id ???
+	graph build
+	graph publish --subgraph-id Ce1om4KPxZHwFxhtz2pVuCD4AUiKisrYecHVWsvEW6MU

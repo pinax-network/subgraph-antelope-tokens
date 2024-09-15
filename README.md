@@ -12,18 +12,12 @@
 
 - **API Key**: <https://thegraph.com/studio/apikeys/>
 - **Base URL**: <https://gateway.thegraph.com/api>
-- **Subgraph ID**:
-  - `WAX_SUBGRAPH_ID`
-  - `EOS_SUBGRAPH_ID`
-- **Subgraph NFT**:
-  - `WAX_SUBGRAPH_ID`
-  - `EOS_SUBGRAPH_ID`
 - **Query URL format**: `{base_url}`/api/`{api-key}`/subgraphs/id/`{subgraph_id}`
 
 | Chain | Subgraph ID |
 | ----- | ----------- |
-| WAX   | [`WAX_SUBGRAPH_ID`](https://thegraph.com/explorer/subgraphs/WAX_SUBGRAPH_ID?view=Query&chain=arbitrum-one) |
-| EOS   | [`EOS_SUBGRAPH_ID`](https://thegraph.com/explorer/subgraphs/EOS_SUBGRAPH_ID?view=Query&chain=arbitrum-one) |
+| WAX   | [`6Tt5mHVNDyAo3KbsYMUeemmzs2381vXUquXw75EnG9cW`](https://thegraph.com/explorer/subgraphs/6Tt5mHVNDyAo3KbsYMUeemmzs2381vXUquXw75EnG9cW?view=Query&chain=arbitrum-one) |
+| EOS   | [`Ce1om4KPxZHwFxhtz2pVuCD4AUiKisrYecHVWsvEW6MU`](https://thegraph.com/explorer/subgraphs/Ce1om4KPxZHwFxhtz2pVuCD4AUiKisrYecHVWsvEW6MU?view=Query&chain=arbitrum-one) |
 
 ## GraphQL
 

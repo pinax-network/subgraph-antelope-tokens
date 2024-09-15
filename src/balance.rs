@@ -25,15 +25,16 @@ pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> Optio
     // // removal of balance typically handled by `close` action
     // https://github.com/eosnetworkfoundation/eos-system-contracts/blob/8ecd1ac6d312085279cafc9c1a5ade6affc886da/contracts/eosio.token/src/eosio.token.cpp#L182
     if db_op.operation() == Operation::Remove {
-        // // TABLE::Balance
-        // tables
-        //     .create_row("Balance", &key)
-        //     // pointers
-        //     .set("block", block)
-        //     .set("token", &token)
-        //     // balance
-        //     .set("owner", owner)
-        //     .set_bigint_or_zero("balance", &0.to_string());
+        // TABLE::Balance
+        tables
+            .create_row("Balance", &key)
+            // pointers
+            .set("block", block)
+            .set("token", &token)
+            // balance
+            .set("owner", owner)
+            // 0 amount is not allowed: https://github.com/graphprotocol/graph-node/issues/5644
+            .set_bigint_or_zero("balance", &0.00000001.to_string());
         return None;
     }
 
@@ -61,12 +62,12 @@ pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> Optio
         return None;
     }
 
-    let balance = new_balance.unwrap();
+    let mut balance = new_balance.unwrap();
     let precision = balance.symbol.precision();
     let sym = Symbol::from_precision(symcode, precision);
 
     if balance.amount == 0 {
-        return None;
+        balance.amount += 1; // 0 balance is not allowed: https://github.com/graphprotocol/graph-node/issues/5644
     }
 
     // TABLE::Balance
@@ -77,7 +78,8 @@ pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> Optio
         .set("token", &token)
         // balance
         .set("owner", owner)
-        .set_bigint_or_zero("balance", &balance.amount.to_string());
+        .set_bigdecimal("balance", &balance.value().to_string());
+    // .set_bigint_or_zero("balance", &balance.amount.to_string());
 
     return Some(Token {
         key: token.to_string(),

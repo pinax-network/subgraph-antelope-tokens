@@ -3,6 +3,8 @@ description: EOS Tokens Balances & Supply
 repository: https://github.com/pinax-network/subgraph-antelope-tokens
 schema:
   file: ../../schema.graphql
+indexerHints:
+  prune: 63072000 # 1 year
 dataSources:
   - kind: substreams
     name: eos_tokens

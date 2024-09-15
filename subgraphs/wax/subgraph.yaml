@@ -4,14 +4,14 @@ repository: https://github.com/pinax-network/subgraph-antelope-tokens
 schema:
   file: ../../schema.graphql
 indexerHints:
-  prune: auto
+  prune: 63072000 # 1 year
 dataSources:
   - kind: substreams
     name: wax_tokens
     network: wax
     source:
-      # startBlock: 266683669 # 1 year ago
-      startBlock: 329406258 # 1 year ago
+      startBlock: 266683669 # 1 year ago
+      # startBlock: 329406258
       package:
         moduleName: graph_out
         file: ../../antelope-tokens-v0.1.0.spkg

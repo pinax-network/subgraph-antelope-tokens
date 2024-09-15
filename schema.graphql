@@ -1,7 +1,7 @@
 type Balance @entity {
   id:                 ID!
   owner:              String!
-  balance:            BigInt!
+  balance:            BigDecimal!
 
   # derived fields
   block:              Block!
@@ -23,8 +23,8 @@ type Token @entity {
 
 type Supply @entity {
   id:                 ID!
-  supply:             BigInt!
-  maxSupply:          BigInt!
+  supply:             BigDecimal!
+  maxSupply:          BigDecimal!
 
   # derived fields
   block:              Block!

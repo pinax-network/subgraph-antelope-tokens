@@ -65,6 +65,27 @@ query Tokens {
 }
 ```
 
+**Recent Balances Changes**
+
+```graphql
+query RecentBalancesChanges{
+  balances(
+    orderBy:block__number, orderDirection:desc) {
+    owner
+    balance
+    block{
+      timestamp
+      number
+    }
+    token{
+      code
+      symcode
+      precision
+    }
+  }
+}
+```
+
 ## Substreams Modules
 
 ```mermaid

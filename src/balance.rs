@@ -25,6 +25,7 @@ pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> Optio
     // // removal of balance typically handled by `close` action
     // https://github.com/eosnetworkfoundation/eos-system-contracts/blob/8ecd1ac6d312085279cafc9c1a5ade6affc886da/contracts/eosio.token/src/eosio.token.cpp#L182
     if db_op.operation() == Operation::Remove {
+        log::debug!("REMOVE {}:{}", token, owner);
         // TABLE::Balance
         tables
             .create_row("Balance", &key)
@@ -33,8 +34,7 @@ pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> Optio
             .set("token", &token)
             // balance
             .set("owner", owner)
-            // 0 amount is not allowed: https://github.com/graphprotocol/graph-node/issues/5644
-            .set_bigint_or_zero("balance", &0.00000001.to_string());
+            .set_bigdecimal("balance", &0.to_string());
         return None;
     }
 
@@ -62,13 +62,9 @@ pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> Optio
         return None;
     }
 
-    let mut balance = new_balance.unwrap();
+    let balance = new_balance.as_ref().expect("missing new_balance");
     let precision = balance.symbol.precision();
     let sym = Symbol::from_precision(symcode, precision);
-
-    if balance.amount == 0 {
-        balance.amount += 1; // 0 balance is not allowed: https://github.com/graphprotocol/graph-node/issues/5644
-    }
 
     // TABLE::Balance
     tables
@@ -79,12 +75,12 @@ pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> Optio
         // balance
         .set("owner", owner)
         .set_bigdecimal("balance", &balance.value().to_string());
-    // .set_bigint_or_zero("balance", &balance.amount.to_string());
 
+    log::debug!("INSERT: {:?}", balance);
     return Some(Token {
         key: token.to_string(),
         clock: clock.clone(),
         code: code.to_string(),
-        sym: sym,
+        sym,
     });
 }

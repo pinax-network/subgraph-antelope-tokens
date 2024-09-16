@@ -30,9 +30,8 @@ pub fn insert_supply(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> Option
             .set("block", block)
             .set("token", token.as_str())
             // supply
-            // 0 amount is not allowed: https://github.com/graphprotocol/graph-node/issues/5644
-            .set_bigint_or_zero("supply", &0.00000001.to_string())
-            .set_bigint_or_zero("maxSupply", &0.00000001.to_string());
+            .set_bigdecimal("supply", &0.to_string())
+            .set_bigdecimal("maxSupply", &0.to_string());
         return None;
     }
 
@@ -63,18 +62,10 @@ pub fn insert_supply(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> Option
 
     let raw_primary_key = Name::from(db_op.primary_key.as_str()).value;
     let symcode = SymbolCode::from(raw_primary_key);
-    let mut supply = new_supply.unwrap();
-    let mut max_supply = new_max_supply.unwrap();
+    let supply = new_supply.as_ref().expect("missing new_supply");
+    let max_supply = new_max_supply.as_ref().expect("missing new_supply");
     let precision = supply.symbol.precision();
     let sym = Symbol::from_precision(symcode, precision);
-
-    if supply.amount == 0 {
-        supply.amount += 1; // 0 amount is not allowed: https://github.com/graphprotocol/graph-node/issues/5644
-    }
-
-    if max_supply.amount == 0 {
-        max_supply.amount += 1; // 0 amount is not allowed: https://github.com/graphprotocol/graph-node/issues/5644
-    }
 
     // TABLE::Supply
     tables
@@ -85,8 +76,6 @@ pub fn insert_supply(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> Option
         // supply
         .set_bigdecimal("supply", &supply.value().to_string())
         .set_bigdecimal("maxSupply", &max_supply.value().to_string());
-    // .set_bigint_or_zero("supply", &supply.amount.to_string())
-    // .set_bigint_or_zero("maxSupply", &max_supply.amount.to_string());
 
     return Some(Token {
         key: token.to_string(),

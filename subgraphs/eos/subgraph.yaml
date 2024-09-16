@@ -10,7 +10,7 @@ dataSources:
     name: eos_tokens
     network: eos
     source:
-      startBlock: 331185630 # 1 year ago
+      startBlock: 338251582 # 331185630 # 1 year ago
       package:
         moduleName: graph_out
         file: ../../antelope-tokens-v0.1.0.spkg

@@ -10,7 +10,7 @@ dataSources:
     name: wax_tokens
     network: wax
     source:
-      startBlock: 266683669 # 1 year ago
+      startBlock: 266934121 # 266683669 # 1 year ago
       # startBlock: 329406258
       package:
         moduleName: graph_out

@@ -1,0 +1,36 @@
+specVersion: v0.1.0
+package:
+  name: antelope_tokens_block_index
+  version: v0.1.0
+  url: https://github.com/pinax-network/subgraph-antelope-tokens
+  image: ../subgraphs/wax/logo.jpg
+
+imports:
+  antelope: https://github.com/pinax-network/firehose-antelope/releases/download/v0.0.5/antelope-v0.0.5.spkg
+
+binaries:
+  default:
+    type: wasm/rust-v1
+    file: ./target/wasm32-unknown-unknown/release/antelope_tokens_block_index.wasm
+
+modules:
+  - name: index_blocks
+    kind: blockIndex
+    inputs:
+      - source: sf.antelope.type.v1.Block
+    output:
+      type: proto:sf.substreams.index.v1.Keys
+
+  - name: map_db_ops
+    kind: map
+    inputs:
+      - source: sf.antelope.type.v1.Block
+    blockFilter:
+      module: index_blocks
+      query:
+        string: "blockIndex"
+        params: false
+    output:
+      type: proto:sf.antelope.type.v1.DBOps
+
+network: wax

@@ -5,13 +5,6 @@ use substreams::pb::substreams::Clock;
 use substreams_antelope::{pb::DbOp, Block};
 use substreams_entity_change::tables::Tables;
 
-#[derive(Debug, Clone)]
-pub struct DbOpExt {
-    pub index: u32,
-    pub transaction_id: String,
-    pub db_op: DbOp,
-}
-
 use crate::{
     balance::insert_balance,
     index::{collect_db_op_keys, is_match},
@@ -19,6 +12,13 @@ use crate::{
     supply::insert_supply,
     tokens::Token,
 };
+
+#[derive(Debug, Clone)]
+pub struct DbOpExt {
+    pub index: u32,
+    pub transaction_id: String,
+    pub db_op: DbOp,
+}
 
 pub fn collapse_db_ops_by_block(block: &Block) -> Vec<DbOpExt> {
     let mut collapsed_db_ops: HashMap<String, DbOpExt> = HashMap::new();

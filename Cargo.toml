@@ -1,5 +1,5 @@
 [package]
-name = "antelope_tokens"
+name = "antelope-tokens"
 edition = "2021"
 version = "0.0.0"
 

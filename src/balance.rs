@@ -25,17 +25,9 @@ pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> Optio
     // // removal of balance typically handled by `close` action
     // https://github.com/eosnetworkfoundation/eos-system-contracts/blob/8ecd1ac6d312085279cafc9c1a5ade6affc886da/contracts/eosio.token/src/eosio.token.cpp#L182
     if db_op.operation() == Operation::Remove {
-        log::debug!("REMOVE {}:{}", token, owner);
-        // TABLE::Balance
-        tables
-            .create_row("Balance", &key)
-            // pointers
-            .set("block", block)
-            .set("token", &token)
-            // balance
-            .set("owner", owner)
-            .set_bigdecimal("balance", &0.to_string());
-        return None;
+        log::debug!("REMOVE {} {:?}", key, clock);
+        // TO-DO: delete if exists is not implemented in SpS
+        // tables.delete_row("Balance", &key);
     }
 
     // decoded
@@ -67,6 +59,7 @@ pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> Optio
     let sym = Symbol::from_precision(symcode, precision);
 
     // TABLE::Balance
+    let value = balance.value();
     tables
         .create_row("Balance", key)
         // pointers
@@ -74,9 +67,8 @@ pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> Optio
         .set("token", &token)
         // balance
         .set("owner", owner)
-        .set_bigdecimal("balance", &balance.value().to_string());
+        .set_bigdecimal("balance", &value.to_string());
 
-    log::debug!("INSERT: {:?}", balance);
     return Some(Token {
         key: token.to_string(),
         clock: clock.clone(),

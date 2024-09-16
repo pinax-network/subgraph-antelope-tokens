@@ -2,7 +2,6 @@ use antelope::{Asset, Name, Symbol, SymbolCode};
 use substreams::log;
 use substreams::pb::substreams::Clock;
 use substreams_antelope::decoder::decode;
-use substreams_antelope::pb::db_op::Operation;
 use substreams_antelope::pb::DbOp;
 use substreams_entity_change::tables::Tables;
 
@@ -19,21 +18,6 @@ pub fn insert_supply(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> Option
     let symcode = SymbolCode::from(raw_primary_key);
     let token = token_key(code, &symcode);
     let block = clock.id.as_str();
-
-    // removal of balance typically handled by `close` action
-    // https://github.com/eosnetworkfoundation/eos-system-contracts/blob/8ecd1ac6d312085279cafc9c1a5ade6affc886da/contracts/eosio.token/src/eosio.token.cpp#L182
-    if db_op.operation() == Operation::Remove {
-        // TABLE::Supply
-        tables
-            .create_row("Supply", token.as_str())
-            // pointers
-            .set("block", block)
-            .set("token", token.as_str())
-            // supply
-            .set_bigdecimal("supply", &0.to_string())
-            .set_bigdecimal("maxSupply", &0.to_string());
-        return None;
-    }
 
     // decoded
     // let old_data = decode::<abi::types::CurrencyStats>(&db_op.old_data_json).ok();

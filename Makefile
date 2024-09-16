@@ -10,7 +10,7 @@ build:
 
 .PHONY: gui
 gui:
-	substreams gui -e wax.substreams.pinax.network:443 graph_out -s 329406157
+	substreams gui -e wax.substreams.pinax.network:443 graph_out -s 50000000 -t 51000000 --production-mode
 
 .PHONY: run
 run:

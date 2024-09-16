@@ -24,12 +24,11 @@ modules:
     blockFilter:
       module: block_index:index_blocks
       query:
-        string: "*"
-        params: false
+        params: true
     output:
       type: proto:sf.substreams.sink.entity.v1.EntityChanges
 
 network: wax
 
 params:
-  graph_out: "*"
+  graph_out: "db.table:accounts || db.table:stat"

@@ -9,6 +9,7 @@ crate-type = ["cdylib"]
 [dependencies]
 substreams-antelope = "0.4"
 substreams = "0.5"
+itertools = "^0.13"
 
 [profile.release]
 lto = true

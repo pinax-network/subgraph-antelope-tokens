@@ -14,8 +14,9 @@ localblocks
 rpc-cache
 localdata
 *.spkg
+!block-index/*.spkg
+!imports/*.spkg
 *.parquet
-!substreams-sink-entity-changes-v1.3.3.spkg
 
 ### VisualStudioCode template
 .vscode/*

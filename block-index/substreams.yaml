@@ -28,7 +28,7 @@ modules:
     blockFilter:
       module: index_blocks
       query:
-        string: "blockIndex"
+        string: "db.table:accounts || db.table:stat"
         params: false
     output:
       type: proto:sf.antelope.type.v1.DBOps

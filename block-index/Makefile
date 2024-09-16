@@ -10,7 +10,7 @@ build:
 
 .PHONY: gui
 gui:
-	substreams gui -e wax.substreams.pinax.network:443 map_db_ops -s 266683669 --production-mode
+	substreams gui -e wax.substreams.pinax.network:443 map_db_ops -s 2 --production-mode
 
 .PHONY: run
 run:

@@ -17,14 +17,14 @@ pub fn graph_out(params: String, clock: Clock, db_ops: DbOps) -> Result<EntityCh
     let mut tokens = HashMap::new();
     for db_op_ext in db_ops.db_ops.iter() {
         match insert_db_op(&params, &mut tables, &clock, &db_op_ext) {
-            Some(token) => tokens.insert(token.key.clone(), token),
+            Some(token) => tokens.insert(token.to_string(), token),
             None => None,
         };
     }
 
     // TABLE::Token
     for token in tokens.values() {
-        insert_token(&mut tables, token);
+        insert_token(&mut tables, &clock, token);
     }
 
     // TABLE::Block

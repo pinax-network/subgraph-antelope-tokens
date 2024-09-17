@@ -1,7 +1,7 @@
 specVersion: v0.1.0
 package:
   name: antelope_tokens
-  version: v0.1.0
+  version: v0.1.2
   url: https://github.com/pinax-network/subgraph-antelope-tokens
   image: ./subgraphs/wax/logo.jpg
 

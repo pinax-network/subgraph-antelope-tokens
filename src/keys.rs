@@ -1,9 +1,5 @@
-use antelope::SymbolCode;
+use antelope::{ExtendedSymbol, Name};
 
-pub fn balance_key(token: &str, owner: &str) -> String {
+pub fn balance_key(token: &ExtendedSymbol, owner: &Name) -> String {
     format!("{}:{}", token, owner)
-}
-
-pub fn token_key(code: &str, symcode: &SymbolCode) -> String {
-    format!("{}:{}", code, symcode.to_string())
 }

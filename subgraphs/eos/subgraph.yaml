@@ -13,7 +13,7 @@ dataSources:
       startBlock: 331697018 # 1 year ago
       package:
         moduleName: graph_out
-        file: ../../antelope-tokens-v0.1.0.spkg
+        file: ../../antelope-tokens-v0.1.2.spkg
     mapping:
       kind: substreams/graph-entities
       apiVersion: 0.0.5

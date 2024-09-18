@@ -16,3 +16,7 @@ deploy:
 publish:
 	graph build
 	graph publish --subgraph-id Ce1om4KPxZHwFxhtz2pVuCD4AUiKisrYecHVWsvEW6MU
+
+.PHONY: gui
+gui:
+	substreams gui ../../substreams.yaml -e eos.substreams.pinax.network:443 graph_out -s 331697018 --production-mode

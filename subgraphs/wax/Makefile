@@ -19,4 +19,4 @@ publish:
 
 .PHONY: gui
 gui:
-	substreams gui ../../substreams.yaml -e wax.substreams.pinax.network:443 graph_out -s 267195072 --production-mode
+	substreams gui ../../substreams.yaml -e wax.substreams.pinax.network:443 graph_out -s 2 -t 0 --production-mode

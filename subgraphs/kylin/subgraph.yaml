@@ -1,5 +1,5 @@
 specVersion: 1.2.0
-description: WAX Tokens Balances & Supply
+description: Kylin Tokens Balances & Supply
 repository: https://github.com/pinax-network/subgraph-antelope-tokens
 schema:
   file: ../../schema.graphql
@@ -7,8 +7,8 @@ indexerHints:
   prune: auto # prevents time travel queries
 dataSources:
   - kind: substreams
-    name: wax_tokens
-    network: wax
+    name: kylin_tokens
+    network: kylin
     source:
       startBlock: 2 # since genesis
       package:

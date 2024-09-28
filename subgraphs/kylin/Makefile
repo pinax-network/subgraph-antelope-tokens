@@ -15,7 +15,7 @@ deploy:
 .PHONY: publish
 publish:
 	graph build
-	graph publish --subgraph-id ??
+	graph publish --subgraph-id B7YqehhCQyZmqCPL6raVv8ncqzLq69EFirjf7Gnfiv7A
 
 .PHONY: gui
 gui:

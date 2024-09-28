@@ -18,6 +18,7 @@
 | ----- | ----------- |
 | WAX   | [`6Tt5mHVNDyAo3KbsYMUeemmzs2381vXUquXw75EnG9cW`](https://thegraph.com/explorer/subgraphs/6Tt5mHVNDyAo3KbsYMUeemmzs2381vXUquXw75EnG9cW?view=Query&chain=arbitrum-one) |
 | EOS   | [`Ce1om4KPxZHwFxhtz2pVuCD4AUiKisrYecHVWsvEW6MU`](https://thegraph.com/explorer/subgraphs/Ce1om4KPxZHwFxhtz2pVuCD4AUiKisrYecHVWsvEW6MU?view=Query&chain=arbitrum-one) |
+| Kylin   | [`B7YqehhCQyZmqCPL6raVv8ncqzLq69EFirjf7Gnfiv7A`](https://thegraph.com/explorer/subgraphs/B7YqehhCQyZmqCPL6raVv8ncqzLq69EFirjf7Gnfiv7A?view=Query&chain=arbitrum-one) |
 
 ## GraphQL
 
@@ -93,4 +94,11 @@ query RecentBalancesChanges {
 graph TD;
   graph_out[map: graph_out];
   sf.antelope.type.v1.Block[source: sf.antelope.type.v1.Block] --> graph_out;
+```
+
+## Subgraph deployment
+
+```bash
+graph indexer rules prepare --network arbitrum-one <Qm>
+graph indexer allocations create <Qm> arbitrum-one 100
 ```

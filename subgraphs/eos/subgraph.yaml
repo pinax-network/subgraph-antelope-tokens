@@ -4,13 +4,13 @@ repository: https://github.com/pinax-network/subgraph-antelope-tokens
 schema:
   file: ../../schema.graphql
 indexerHints:
-  prune: 63072000 # 1 year
+  prune: auto # prevents time travel queries
 dataSources:
   - kind: substreams
     name: eos_tokens
     network: eos
     source:
-      startBlock: 331697018 # 1 year ago
+      startBlock: 2 # since genesis
       package:
         moduleName: graph_out
         file: ../../antelope-tokens-v0.1.2.spkg

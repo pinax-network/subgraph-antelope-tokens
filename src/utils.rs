@@ -1,12 +1,10 @@
-use substreams::matches_keys_in_parsed_expr;
+use substreams::{matches_keys_in_parsed_expr, pb::substreams::Clock};
 
-// Timestamp to date conversion
-// ex: 2015-07-30T16:02:18Z => 2015-07-30
-pub fn block_time_to_date(block_time: &str) -> String {
-    match block_time.split('T').next() {
-        Some(date) => date.to_string(),
-        None => "".to_string(),
-    }
+// Clock to date string
+// ex: Clock => 2015-07-30
+pub fn to_date(clock: &Clock) -> String {
+    let timestamp = clock.timestamp.as_ref().expect("missing timestamp");
+    timestamp.to_string().split('T').next().expect("missing date").to_string()
 }
 
 // Timestamp to date conversion
@@ -48,14 +46,6 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_block_time_to_date() {
-        assert_eq!(block_time_to_date("2015-07-30T16:02:18Z"), "2015-07-30");
-        assert_eq!(block_time_to_date("2020-01-01T00:00:00Z"), "2020-01-01");
-        assert_eq!(block_time_to_date("1999-12-31T23:59:59Z"), "1999-12-31");
-        assert_eq!(block_time_to_date("2000-02-29T12:34:56Z"), "2000-02-29");
-    }
-
-    #[test]
     fn test_block_date_to_month() {
         assert_eq!(block_date_to_month("2015-07-30"), "2015-07");
         assert_eq!(block_date_to_month("2020-01-01"), "2020-01");
@@ -69,13 +59,6 @@ mod tests {
         assert_eq!(block_date_to_year("2020-01-01"), "2020");
         assert_eq!(block_date_to_year("1999-12-31"), "1999");
         assert_eq!(block_date_to_year("2000-02-29"), "2000");
-    }
-
-    #[test]
-    fn test_invalid_timestamp() {
-        assert_eq!(block_time_to_date("invalid_timestamp"), "invalid_timestamp");
-        assert_eq!(block_time_to_date("2015-07-30 16:02:18"), "2015-07-30 16:02:18");
-        assert_eq!(block_time_to_date(""), "");
     }
 
     #[test]

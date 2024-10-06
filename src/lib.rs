@@ -4,6 +4,7 @@ mod blocks;
 mod db_ops;
 mod index;
 mod keys;
+mod order_by;
 mod sinks;
 mod supply;
 mod tokens;

@@ -13,7 +13,7 @@ dataSources:
       startBlock: 2 # since genesis
       package:
         moduleName: graph_out
-        file: ../../antelope-tokens-v0.1.2.spkg
+        file: ../../antelope-tokens-v0.2.0.spkg
     mapping:
       kind: substreams/graph-entities
       apiVersion: 0.0.5

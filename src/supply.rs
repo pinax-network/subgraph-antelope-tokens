@@ -6,6 +6,8 @@ use substreams_antelope::pb::DbOp;
 use substreams_entity_change::tables::Tables;
 
 use crate::abi;
+use crate::order_by::insert_order_by;
+use crate::tokens::insert_token_metadata;
 
 // https://github.com/pinax-network/firehose-antelope/blob/534ca5bf2aeda67e8ef07a1af8fc8e0fe46473ee/proto/sf/antelope/type/v1/type.proto#L702
 // https://github.com/eosnetworkfoundation/eos-system-contracts/blob/8ecd1ac6d312085279cafc9c1a5ade6affc886da/contracts/eosio.token/include/eosio.token/eosio.token.hpp#L162-L168
@@ -42,21 +44,25 @@ pub fn insert_supply(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> Option
 
     // fields derived from old_balance or new_balance
     let sym = old_supply.or(new_supply).as_ref().expect("missing old_supply or new_supply").symbol;
-    let ext_sym = ExtendedSymbol::from_extended(sym, code);
+    let token = ExtendedSymbol::from_extended(sym, code);
     let zero = Asset::from_amount(0, sym);
     let supply = new_supply.as_ref().unwrap_or(&zero);
     let max_supply = new_max_supply.as_ref().unwrap_or(&zero);
 
     // TABLE::Supply
-    tables
-        .create_row("Supply", ext_sym.to_string())
-        // pointers
-        .set("block", clock.id.as_str())
-        .set("token", &ext_sym.to_string())
-        .set("isDeleted", is_deleted)
+    let row = tables
+        .create_row("Supply", token.to_string().as_str())
+        // // pointers
+        // .set("block", clock.id.as_str())
+        // .set("token", token.to_string().as_str())
+        // delete mutations
+        .set("is_deleted", is_deleted)
         // supply
         .set_bigdecimal("supply", &supply.value().to_string())
-        .set_bigdecimal("maxSupply", &max_supply.value().to_string());
+        .set_bigdecimal("max_supply", &max_supply.value().to_string());
 
-    return Some(ext_sym);
+    insert_token_metadata(row, &token);
+    insert_order_by(row, clock);
+
+    return Some(token);
 }

@@ -2,11 +2,48 @@ type Balance @entity {
   id:                 ID!
   owner:              String!
   balance:            BigDecimal!
-  isDeleted:          Boolean!
 
-  # derived fields
-  block:              Block!
-  token:              Token!
+  # token
+  code:               String!
+  symcode:            String!
+  sym:                String!
+  precision:          BigInt!
+
+  # delete mutations
+  is_deleted:         Boolean!
+
+  # order by
+  timestamp:          Timestamp! # microseconds
+  block_number:       BigInt!
+  block_date:         String!
+
+  # # derived fields
+  # block:              Block!
+  # token:              Token!
+}
+
+type Supply @entity {
+  id:                 ID!
+  supply:             BigDecimal!
+  max_supply:         BigDecimal!
+
+  # token
+  code:               String!
+  symcode:            String!
+  sym:                String!
+  precision:          BigInt!
+
+  # delete mutations
+  is_deleted:         Boolean!
+
+  # order by
+  timestamp:          Timestamp! # microseconds
+  block_number:       BigInt!
+  block_date:         String!
+
+  # # derived fields
+  # block:              Block!
+  # token:              Token!
 }
 
 type Token @entity {
@@ -16,28 +53,22 @@ type Token @entity {
   sym:                String!
   precision:          BigInt!
 
-  # derived fields
-  block:              Block!
-  balances:           [Balance!]! @derivedFrom(field: "token")
-  supply:             Supply! @derivedFrom(field: "token")
-}
+  # order by
+  timestamp:          Timestamp! # microseconds
+  block_number:       BigInt!
+  block_date:         String!
 
-type Supply @entity {
-  id:                 ID!
-  supply:             BigDecimal!
-  maxSupply:          BigDecimal!
-  isDeleted:          Boolean!
-
-  # derived fields
-  block:              Block!
-  token:              Token!
+  # # derived fields
+  # balances:           [Balance!]! @derivedFrom(field: "token")
+  # supply:             Supply! @derivedFrom(field: "token")
 }
 
 type Block @entity {
   id:                 ID!
+  number:             BigInt!
+  seconds:            BigInt!
   date:               String!
   month:              String!
   year:               String!
-  timestamp:          Timestamp!
-  number:             BigInt!
+  timestamp:          Timestamp! # microseconds
 }

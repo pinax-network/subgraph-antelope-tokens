@@ -19,4 +19,4 @@ publish:
 
 .PHONY: cache
 cache:
-	substreams cache ../../substreams.yaml -e kylin.substreams.pinax.network:443 graph_out -s 2 -t 0 --production-mode
+	substreams gui ../../substreams.yaml -e kylin.substreams.pinax.network:443 graph_out -s 2 -t 0 --production-mode

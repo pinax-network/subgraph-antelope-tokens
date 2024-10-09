@@ -17,6 +17,6 @@ publish:
 	graph build
 	graph publish --subgraph-id Ce1om4KPxZHwFxhtz2pVuCD4AUiKisrYecHVWsvEW6MU
 
-.PHONY: gui
-gui:
-	substreams gui ../../substreams.yaml -e eos.substreams.pinax.network:443 graph_out -s 2 -t 0 --production-mode
+.PHONY: cache
+cache:
+	substreams cache ../../substreams.yaml -e eos.substreams.pinax.network:443 graph_out -s 2 -t 0 --production-mode

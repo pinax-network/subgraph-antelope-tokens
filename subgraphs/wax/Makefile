@@ -17,6 +17,6 @@ publish:
 	graph build
 	graph publish --subgraph-id 6Tt5mHVNDyAo3KbsYMUeemmzs2381vXUquXw75EnG9cW
 
-.PHONY: gui
-gui:
-	substreams gui ../../substreams.yaml -e wax.substreams.pinax.network:443 graph_out -s 2 -t 0 --production-mode
+.PHONY: cache
+cache:
+	substreams cache ../../substreams.yaml -e wax.substreams.pinax.network:443 graph_out -s 2 -t 0 --production-mode

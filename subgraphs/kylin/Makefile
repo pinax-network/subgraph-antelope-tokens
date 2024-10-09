@@ -17,6 +17,6 @@ publish:
 	graph build
 	graph publish --subgraph-id B7YqehhCQyZmqCPL6raVv8ncqzLq69EFirjf7Gnfiv7A
 
-.PHONY: gui
-gui:
-	substreams gui ../../substreams.yaml -e kylin.substreams.pinax.network:443 graph_out -s 2 -t 0 --production-mode
+.PHONY: cache
+cache:
+	substreams cache ../../substreams.yaml -e kylin.substreams.pinax.network:443 graph_out -s 2 -t 0 --production-mode

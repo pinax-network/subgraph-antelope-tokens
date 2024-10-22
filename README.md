@@ -26,11 +26,13 @@
 
 ```graphql
 query BalanceByOwner{
-  balances(first:20, where:{ owner:"swap.alcor" }) {
-    code
-    symcode
-    precision
+  balances(first: 20, where:{ owner: "eosio.stake" }) {
     balance
+    token{
+     code
+      symcode
+      precision
+    }
   }
 }
 ```
@@ -39,11 +41,13 @@ query BalanceByOwner{
 
 ```graphql
 query TokensHolders {
-  balances(first:20, where: {code:"eosio.token"} orderBy:balance, orderDirection:desc){
-    code
-    symcode
+  balances(where: {token_: {code: "eosio.token"}} orderBy: balance, orderDirection: desc) {
     owner
     balance
+    token{
+     code
+      symcode
+    }
   }
 }
 ```
@@ -52,12 +56,14 @@ query TokensHolders {
 
 ```graphql
 query Supply {
-  supplies(first:20, orderBy:block_number, orderDirection:desc){
+  supplies(first: 20, orderBy: block__number, orderDirection: desc){
     supply
     max_supply
-    code
-    symcode
-    precision
+    token{
+      code
+      symcode
+      precision
+    }
   }
 }
 ```
@@ -66,13 +72,17 @@ query Supply {
 
 ```graphql
 query RecentBalancesChanges {
-  balances(first: 20, orderBy:block_number, orderDirection:desc) {
-    code
-    symcode
+  balances(first: 20, orderBy: block__number, orderDirection: desc) {
     owner
     balance
-    block_number
-    block_date
+    token{
+     code
+     symcode
+    }
+  block{
+      number
+      date
+    }
   }
 }
 ```

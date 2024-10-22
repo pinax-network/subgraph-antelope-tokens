@@ -31,5 +31,3 @@ modules:
         params: false
     output:
       type: proto:sf.antelope.type.v1.DBOps
-
-network: wax

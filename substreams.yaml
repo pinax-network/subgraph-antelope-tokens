@@ -3,10 +3,9 @@ package:
   name: antelope_tokens
   version: v0.3.0
   url: https://github.com/pinax-network/subgraph-antelope-tokens
-  image: ./subgraphs/wax/logo.jpg
 
 imports:
-  entity_change: ./imports/substreams-sink-entity-changes-v1.3.3.spkg
+  entity_changes: https://github.com/streamingfast/substreams-sink-entity-changes/releases/download/v2.0.0/substreams-entity-change-v2.0.0.spkg
   block_index: ./block-index/antelope-tokens-block-index-v0.1.0.spkg
 
 binaries:

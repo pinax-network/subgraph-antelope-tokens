@@ -1,12 +1,11 @@
 specVersion: v0.1.0
 package:
   name: antelope_tokens_block_index
-  version: v0.1.0
+  version: v0.2.0
   url: https://github.com/pinax-network/subgraph-antelope-tokens
-  image: ../subgraphs/wax/logo.jpg
 
 imports:
-  antelope: https://github.com/pinax-network/firehose-antelope/releases/download/v0.0.5/antelope-v0.0.5.spkg
+  antelope: https://github.com/pinax-network/firehose-antelope/releases/download/v2.0.0/antelope-v2.0.0.spkg
 
 binaries:
   default:

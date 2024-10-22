@@ -7,8 +7,8 @@ version = "0.0.0"
 crate-type = ["cdylib"]
 
 [dependencies]
-substreams-antelope = "0.4"
-substreams = "0.5"
+substreams-antelope = "0.6"
+substreams = "0.6"
 itertools = "^0.13"
 
 [profile.release]

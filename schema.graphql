@@ -15,6 +15,7 @@ type Supply @entity {
   id:                 ID!
   supply:             BigDecimal!
   max_supply:         BigDecimal!
+  issuer:             String!
 
   # delete mutations
   is_deleted:         Boolean!

@@ -1,12 +1,10 @@
+use crate::keys::balance_key;
+use crate::utils::parse_json_asset;
 use antelope::{Asset, ExtendedSymbol, Name};
 use substreams::pb::substreams::Clock;
-use substreams_antelope::decoder::decode;
 use substreams_antelope::pb::db_op::Operation;
 use substreams_antelope::pb::DbOp;
 use substreams_entity_change::tables::Tables;
-
-use crate::abi;
-use crate::keys::balance_key;
 
 // https://github.com/pinax-network/firehose-antelope/blob/534ca5bf2aeda67e8ef07a1af8fc8e0fe46473ee/proto/sf/antelope/type/v1/type.proto#L702
 // https://github.com/eosnetworkfoundation/eos-system-contracts/blob/8ecd1ac6d312085279cafc9c1a5ade6affc886da/contracts/eosio.token/include/eosio.token/eosio.token.hpp#L156-L160
@@ -17,23 +15,10 @@ pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> Optio
     let is_deleted = db_op.operation() == Operation::Remove;
 
     // decoded
-    let old_data = decode::<abi::types::Account>(&db_op.old_data_json).ok();
-    let new_data = decode::<abi::types::Account>(&db_op.new_data_json).ok();
+    let old_balance = parse_json_asset(&db_op.old_data_json, "balance");
+    let new_balance = parse_json_asset(&db_op.new_data_json, "balance");
 
     // no valid Accounts
-    if old_data.is_none() && new_data.is_none() {
-        return None;
-    }
-    // parse Assets
-    let old_balance = old_data.as_ref().and_then(|data| match data.balance.parse::<Asset>() {
-        Ok(asset) => Some(asset),
-        Err(_e) => None,
-    });
-    let new_balance = new_data.as_ref().and_then(|data| match data.balance.parse::<Asset>() {
-        Ok(asset) => Some(asset),
-        Err(_e) => None,
-    });
-    // no valid Assets
     if old_balance.is_none() && new_balance.is_none() {
         return None;
     }

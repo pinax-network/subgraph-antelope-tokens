@@ -1,8 +1,6 @@
-mod abi;
 mod balance;
 mod blocks;
 mod db_ops;
-mod index;
 mod keys;
 mod sinks;
 mod supply;

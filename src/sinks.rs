@@ -27,10 +27,13 @@ pub fn graph_out(params: String, clock: Clock, db_ops: DbOps) -> Result<EntityCh
         insert_token(&mut tables, &clock, token);
     }
 
+    // if no tokens, skip block by return empty EntityChanges
+    if tokens.is_empty() {
+        return Ok(EntityChanges::default());
+    };
+
     // TABLE::Block
-    if !tokens.is_empty() {
-        insert_blocks(&mut tables, &clock);
-    }
+    insert_blocks(&mut tables, &clock);
 
     Ok(tables.to_entity_changes())
 }

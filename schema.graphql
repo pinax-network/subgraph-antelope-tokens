@@ -3,23 +3,12 @@ type Balance @entity {
   owner:              String!
   balance:            BigDecimal!
 
-  # token
-  code:               String!
-  symcode:            String!
-  sym:                String!
-  precision:          BigInt!
-
   # delete mutations
   is_deleted:         Boolean!
 
-  # order by
-  timestamp:          Timestamp! # microseconds
-  block_number:       BigInt!
-  block_date:         String!
-
-  # # derived fields
-  # block:              Block!
-  # token:              Token!
+  # derivedFrom
+  block:              Block!
+  token:              Token!
 }
 
 type Supply @entity {
@@ -27,23 +16,12 @@ type Supply @entity {
   supply:             BigDecimal!
   max_supply:         BigDecimal!
 
-  # token
-  code:               String!
-  symcode:            String!
-  sym:                String!
-  precision:          BigInt!
-
   # delete mutations
   is_deleted:         Boolean!
 
-  # order by
-  timestamp:          Timestamp! # microseconds
-  block_number:       BigInt!
-  block_date:         String!
-
-  # # derived fields
-  # block:              Block!
-  # token:              Token!
+  # derivedFrom
+  block:              Block!
+  token:              Token!
 }
 
 type Token @entity {
@@ -53,22 +31,16 @@ type Token @entity {
   sym:                String!
   precision:          BigInt!
 
-  # order by
-  timestamp:          Timestamp! # microseconds
-  block_number:       BigInt!
-  block_date:         String!
-
-  # # derived fields
-  # balances:           [Balance!]! @derivedFrom(field: "token")
-  # supply:             Supply! @derivedFrom(field: "token")
+  # derivedFrom
+  block:              Block!
+  balances:           [Balance!]! @derivedFrom(field: "token")
+  supply:             Supply! @derivedFrom(field: "token")
 }
 
 type Block @entity {
   id:                 ID!
   number:             BigInt!
   seconds:            BigInt!
+  # timestamp:          Timestamp! # Not yet supported by latest release of Graph Node
   date:               String!
-  month:              String!
-  year:               String!
-  timestamp:          Timestamp! # microseconds
 }

@@ -7,8 +7,6 @@ use substreams_entity_change::tables::Tables;
 
 use crate::abi;
 use crate::keys::balance_key;
-use crate::order_by::insert_order_by;
-use crate::tokens::insert_token_metadata;
 
 // https://github.com/pinax-network/firehose-antelope/blob/534ca5bf2aeda67e8ef07a1af8fc8e0fe46473ee/proto/sf/antelope/type/v1/type.proto#L702
 // https://github.com/eosnetworkfoundation/eos-system-contracts/blob/8ecd1ac6d312085279cafc9c1a5ade6affc886da/contracts/eosio.token/include/eosio.token/eosio.token.hpp#L156-L160
@@ -48,19 +46,16 @@ pub fn insert_balance(tables: &mut Tables, clock: &Clock, db_op: &DbOp) -> Optio
 
     // TABLE::Balance
     let key = balance_key(&token, &owner);
-    let row = tables
+    tables
         .create_row("Balance", key)
-        // // pointers
-        // .set("block", clock.id.as_str())
-        // .set("token", &token.to_string())
+        // deriveFrom
+        .set("block", clock.id.as_str())
+        .set("token", &token.to_string())
         // delete mutations
         .set("is_deleted", is_deleted)
         // balance
         .set("owner", owner.to_string())
         .set_bigdecimal("balance", &balance.value().to_string());
-
-    insert_token_metadata(row, &token);
-    insert_order_by(row, clock);
 
     return Some(token);
 }

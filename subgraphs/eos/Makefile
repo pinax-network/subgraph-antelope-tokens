@@ -19,4 +19,16 @@ publish:
 
 .PHONY: cache
 cache:
-	substreams gui ../../substreams.yaml -e eos.substreams.pinax.network:443 graph_out -s 2 -t 0 --production-mode
+	substreams-sink-noop wax.substreams.pinax.network:443 ../substreams.yaml map_db_ops 2: -H "X-Sf-Substreams-Parallel-Jobs: 250"
+
+.PHONY: gui
+gui:
+	substreams gui ../substreams.yaml -e wax.substreams.pinax.network:443 map_db_ops -s -20000 -t 0
+
+.PHONY: load
+load:
+	substreams-sink-graph-load run --graphql-schema ../../schema.graphql tmp/substreams-entities eos.substreams.pinax.network:443 ../../antelope-tokens-v0.2.0.spkg graph_out 398000000
+
+.PHONY: tocsv
+tocsv:
+	./tocsv.sh

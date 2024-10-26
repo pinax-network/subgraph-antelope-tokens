@@ -27,7 +27,7 @@ gui:
 
 .PHONY: load
 load:
-	substreams-sink-graph-load run --graphql-schema ../../schema.graphql tmp/substreams-entities eos.substreams.pinax.network:443 ../../antelope-tokens-v0.3.0.spkg graph_out 398000000
+	substreams-sink-graph-load run --chain-id eos --graphql-schema ../../schema.graphql tmp/substreams-entities eos.substreams.pinax.network:443 ../../antelope-tokens-v0.3.0.spkg graph_out 398000000
 
 .PHONY: tocsv
 tocsv:

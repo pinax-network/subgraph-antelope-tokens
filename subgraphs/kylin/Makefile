@@ -27,7 +27,7 @@ gui:
 
 .PHONY: load
 load:
-	substreams-sink-graph-load run --graphql-schema ../../schema.graphql tmp/substreams-entities kylin.substreams.pinax.network:443 ../../antelope-tokens-v0.3.0.spkg graph_out 370000000 --bundle-size 100000
+	substreams-sink-graph-load run --chain-id kylin --graphql-schema ../../schema.graphql tmp/substreams-entities kylin.substreams.pinax.network:443 ../../antelope-tokens-v0.3.0.spkg graph_out 3000000 --bundle-size 1000000
 
 .PHONY: tocsv
 tocsv:

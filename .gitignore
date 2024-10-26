@@ -6,6 +6,8 @@ buf.gen.yaml
 data/
 target
 state.yaml
+tmp
+workdir
 
 ### Substreams template
 .envrc

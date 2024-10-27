@@ -1,8 +1,6 @@
 use antelope::{Asset, ExtendedSymbol, Name};
-// use substreams::pb::substreams::Clock;
 use substreams_antelope::pb::db_op::Operation;
 use substreams_antelope::pb::DbOp;
-// use substreams_entity_change::tables::Tables;
 
 use crate::{
     pb::antelope::tokens::v1::{Events, Supply},
@@ -43,19 +41,6 @@ pub fn insert_supply(events: &mut Events, db_op: &DbOp) -> Option<ExtendedSymbol
         issuer: issuer.to_string(),
         is_deleted,
     });
-
-    // // TABLE::Supply
-    // tables
-    //     .create_row("Supply", token.to_string().as_str())
-    //     // deriveFrom
-    //     .set("block", clock.id.as_str())
-    //     .set("token", token.to_string().as_str())
-    //     // delete mutations
-    //     .set("is_deleted", is_deleted)
-    //     // supply
-    //     .set_bigdecimal("supply", &supply.value().to_string())
-    //     .set_bigdecimal("max_supply", &max_supply.value().to_string())
-    //     .set("issuer", &issuer.to_string());
 
     return Some(token);
 }

@@ -11,3 +11,8 @@ substreams-entity-change = "2"
 substreams-antelope = "0.6"
 substreams = "0.6"
 antelope = "0.2"
+
+[profile.release]
+lto = true
+opt-level = 's'
+strip = "debuginfo"

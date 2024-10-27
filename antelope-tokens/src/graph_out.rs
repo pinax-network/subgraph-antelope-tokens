@@ -17,26 +17,15 @@ pub fn graph_out(params: String, clock: Clock, events: Events) -> Result<EntityC
 
     // TABLE::Balance
     for balance in events.balance_events {
-        let ext_sym = ExtendedSymbol::from_str(&balance.token).expect("invalid ExtendedSymbol");
-        let sym = ext_sym.get_symbol();
-        let keys = vec![
-            format!("code:{}", ext_sym.get_contract()),
-            format!("owner:{}", balance.owner),
-            format!("sym:{}", sym),
-            format!("symcode:{}", sym.code()),
-            format!("token:{}", ext_sym),
-        ];
-        match matches_keys_in_parsed_expr(&keys, &params) {
-            Ok(true) => {}
-            Ok(false) => continue,
-            Err(e) => return Err(Error::from(e)),
+        if !match_token(&params, &balance.token) {
+            continue;
         }
         let key = format!("{}:{}", balance.token, balance.owner);
         tables
             .create_row("Balance", key)
             // deriveFrom
             .set("block", clock.id.as_str())
-            .set("token", &balance.token.to_string())
+            .set("token", balance.token.as_str())
             // delete mutations
             .set("is_deleted", balance.is_deleted)
             // balance
@@ -47,24 +36,14 @@ pub fn graph_out(params: String, clock: Clock, events: Events) -> Result<EntityC
 
     // TABLE::Supply
     for supply in events.supply_events {
-        let ext_sym = ExtendedSymbol::from_str(&supply.token).expect("invalid ExtendedSymbol");
-        let sym = ext_sym.get_symbol();
-        let keys = vec![
-            format!("code:{}", ext_sym.get_contract()),
-            format!("sym:{}", sym),
-            format!("symcode:{}", sym.code()),
-            format!("token:{}", ext_sym),
-        ];
-        match matches_keys_in_parsed_expr(&keys, &params) {
-            Ok(true) => {}
-            Ok(false) => continue,
-            Err(e) => return Err(Error::from(e)),
+        if !match_token(&params, &supply.token) {
+            continue;
         }
         tables
-            .create_row("Supply", supply.token.to_string().as_str())
+            .create_row("Supply", supply.token.as_str())
             // deriveFrom
             .set("block", clock.id.as_str())
-            .set("token", supply.token.to_string().as_str())
+            .set("token", supply.token.as_str())
             // delete mutations
             .set("is_deleted", supply.is_deleted)
             // supply
@@ -76,14 +55,14 @@ pub fn graph_out(params: String, clock: Clock, events: Events) -> Result<EntityC
 
     // TABLE::Token
     for token in tokens.iter() {
-        let ext_sym = ExtendedSymbol::from_str(token).expect("invalid ExtendedSymbol");
+        let ext_sym = ExtendedSymbol::from_str(token).expect("invalid token ExtendedSymbol");
         let sym = ext_sym.get_symbol();
         tables
             .create_row("Token", token)
             // deriveFrom
             .set("block", clock.id.as_str())
             // token
-            .set("code", ext_sym.get_contract().to_string())
+            .set("contract", ext_sym.get_contract().to_string())
             .set("symcode", sym.code().to_string())
             .set("sym", sym.to_string())
             .set_bigint_or_zero("precision", &sym.precision().to_string());
@@ -114,4 +93,17 @@ pub fn graph_out(params: String, clock: Clock, events: Events) -> Result<EntityC
 pub fn to_date(clock: &Clock) -> String {
     let timestamp = clock.timestamp.as_ref().expect("missing timestamp");
     timestamp.to_string().split('T').next().expect("missing date").to_string()
+}
+
+pub fn match_token(params: &str, token: &str) -> bool {
+    if params.is_empty() {
+        return true;
+    }
+    let ext_sym = ExtendedSymbol::from_str(token).expect("invalid ExtendedSymbol");
+    let keys = vec![format!("contract:{}", ext_sym.get_contract()), format!("token:{}", ext_sym)];
+    match matches_keys_in_parsed_expr(&keys, params) {
+        Ok(true) => return true,
+        Ok(false) => return false,
+        Err(e) => panic!("{}", e),
+    }
 }

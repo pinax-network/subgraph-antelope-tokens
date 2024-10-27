@@ -1,6 +1,6 @@
 mod balance;
 mod events;
 mod graph_out;
-mod pb;
+pub mod pb;
 mod supply;
 mod utils;

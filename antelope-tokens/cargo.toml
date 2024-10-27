@@ -1,5 +1,5 @@
 [package]
-name = "map-events"
+name = "antelope-tokens"
 edition = { workspace = true }
 version = { workspace = true }
 
@@ -12,12 +12,6 @@ serde = { version = "1", features = ["derive"] }
 prost = "0.13"
 prost-types = "0.13"
 substreams-entity-change = "2"
-substreams-database-change = "2"
 substreams = { workspace = true }
 substreams-antelope = { workspace = true }
 antelope = { workspace = true }
-
-[profile.release]
-lto = true
-opt-level = 's'
-strip = "debuginfo"

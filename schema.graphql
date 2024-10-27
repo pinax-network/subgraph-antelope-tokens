@@ -27,7 +27,7 @@ type Supply @entity {
 
 type Token @entity {
   id:                 ID!
-  code:               String!
+  contract:           String!
   symcode:            String!
   sym:                String!
   precision:          BigInt!

@@ -13,10 +13,7 @@
 
 These are the expressions that can be used in queries:
 
-- `code:<contract>` - token contract account name
-- `owner:<owner>` - balance owner account name
-- `sym:<precision>,<symbol>` - token symbol
-- `symcode:<symbol>` - token symbol code
+- `contract:<contract>` - token contract account name
 - `token:<extended_symbol>` - extended token symbol
 
 Queries can include `&&` and `||` logical operands, as well as `(` and `)` parenthesis.

@@ -1,5 +1,5 @@
 [workspace]
-members = ["block-index", "map-events"]
+members = ["block-index", "antelope-tokens"]
 resolver = "2"
 
 [workspace.package]

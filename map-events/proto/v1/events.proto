@@ -1,0 +1,23 @@
+syntax = "proto3";
+
+package antelope.tokens.v1;
+
+message Events {
+  repeated Balance balance_events = 1;
+  repeated Supply supply_events = 2;
+}
+
+message Balance {
+  string token = 1; // ExtendedSymbol
+  string owner = 2; // Name
+  string balance = 3; // Asset
+  bool is_deleted = 4;
+}
+
+message Supply {
+  string token = 1; // ExtendedSymbol
+  string supply = 2; // Asset
+  string max_supply = 3; // Asset
+  string issuer = 4; // Name
+  bool is_deleted = 5;
+}

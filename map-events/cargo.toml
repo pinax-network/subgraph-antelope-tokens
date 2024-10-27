@@ -1,0 +1,21 @@
+[package]
+name = "map-events"
+edition = { workspace = true }
+version = { workspace = true }
+
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+serde_json = "1"
+serde = { version = "1", features = ["derive"] }
+prost = "0.13"
+prost-types = "0.13"
+substreams = { workspace = true }
+substreams-antelope = { workspace = true }
+antelope = { workspace = true }
+
+[profile.release]
+lto = true
+opt-level = 's'
+strip = "debuginfo"

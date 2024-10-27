@@ -1,20 +1,13 @@
-[package]
-name = "antelope-tokens"
+[workspace]
+members = ["block-index", "map-events"]
+resolver = "2"
+
+[workspace.package]
 edition = "2021"
 version = "0.0.0"
 
-[lib]
-crate-type = ["cdylib"]
-
-[dependencies]
+[workspace.dependencies]
 substreams-entity-change = "2"
 substreams-antelope = "0.6"
 substreams = "0.6"
-serde_json = "1"
-serde = { version = "1", features = ["derive"] }
 antelope = "0.2"
-
-[profile.release]
-lto = true
-opt-level = 's'
-strip = "debuginfo"

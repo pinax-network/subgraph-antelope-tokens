@@ -10,7 +10,7 @@ imports:
 binaries:
   default:
     type: wasm/rust-v1
-    file: ./target/wasm32-unknown-unknown/release/antelope_tokens_block_index.wasm
+    file: ../target/wasm32-unknown-unknown/release/block_index.wasm
 
 modules:
   - name: index_blocks

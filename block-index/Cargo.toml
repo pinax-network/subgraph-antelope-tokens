@@ -1,17 +1,12 @@
 [package]
-name = "antelope-tokens-block-index"
-edition = "2021"
-version = "0.0.0"
+name = "block-index"
+edition = { workspace = true }
+version = { workspace = true }
 
 [lib]
 crate-type = ["cdylib"]
 
 [dependencies]
-substreams-antelope = "0.6"
-substreams = "0.6"
+substreams-antelope = { workspace = true }
+substreams = { workspace = true }
 itertools = "^0.13"
-
-[profile.release]
-lto = true
-opt-level = 's'
-strip = "debuginfo"

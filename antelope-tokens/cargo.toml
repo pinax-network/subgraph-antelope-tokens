@@ -8,6 +8,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 prost = "0.13"
+antelope-tokens-events = { path = "../antelope-tokens-events" }
 substreams-entity-change = "2"
 substreams = { workspace = true }
 antelope = { workspace = true }

@@ -1,5 +1,5 @@
 mod balance;
 mod events;
-mod pb;
+pub mod pb;
 mod supply;
 mod utils;

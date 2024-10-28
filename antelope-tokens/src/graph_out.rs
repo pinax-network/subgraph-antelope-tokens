@@ -5,11 +5,10 @@ use antelope::ExtendedSymbol;
 use substreams::errors::Error;
 use substreams::matches_keys_in_parsed_expr;
 use substreams::pb::substreams::Clock;
-use substreams_antelope::pb::db_op::Operation;
 use substreams_entity_change::pb::entity::EntityChanges;
 use substreams_entity_change::tables::Tables;
 
-use crate::pb::antelope::tokens::v1::Events;
+use crate::pb::antelope::tokens::v1::{Events, Operation};
 
 #[substreams::handlers::map]
 pub fn graph_out(params: String, clock: Clock, events: Events) -> Result<EntityChanges, Error> {

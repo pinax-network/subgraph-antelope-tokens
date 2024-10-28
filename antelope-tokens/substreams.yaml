@@ -5,23 +5,8 @@ package:
   url: https://github.com/pinax-network/subgraph-antelope-tokens
 
 imports:
-  block_index: ../block-index/antelope-tokens-block-index-v0.1.0.spkg
+  events: ../antelope-tokens-events/antelope-tokens-events-v0.3.0.spkg
   entity_changes: https://github.com/streamingfast/substreams-sink-entity-changes/releases/download/v2.0.0/substreams-entity-change-v2.0.0.spkg
-
-protobuf:
-  files:
-    - v1/events.proto
-  importPaths:
-    - ./proto
-  excludePaths:
-    - sf/substreams/rpc
-    - sf/substrea
-    - sf/substreams/sink
-    - sf/substreams/index
-    - sf/substreams/index/v1
-    - sf/substreams
-    - sf/antelope/type/v1
-    - google
 
 binaries:
   default:
@@ -29,18 +14,11 @@ binaries:
     file: ../target/wasm32-unknown-unknown/release/antelope_tokens.wasm
 
 modules:
-  - name: map_events
-    kind: map
-    inputs:
-      - map: block_index:map_db_ops
-    output:
-      type: proto:antelope.tokens.v1.Events
-
   - name: graph_out
     kind: map
     inputs:
       - params: string
       - source: sf.substreams.v1.Clock
-      - map: map_events
+      - map: events:map_events
     output:
       type: proto:sf.substreams.sink.entity.v1.EntityChanges

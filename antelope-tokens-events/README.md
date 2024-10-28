@@ -18,6 +18,8 @@ graph TD;
 
 ## Modules
 
+**v0.3.0**
+
 ```bash
 Name: map_events
 Initial block: 0

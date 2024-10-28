@@ -20,8 +20,8 @@ pub struct Balance {
     /// Asset
     #[prost(string, tag="3")]
     pub balance: ::prost::alloc::string::String,
-    #[prost(bool, tag="4")]
-    pub is_deleted: bool,
+    #[prost(enumeration="Operation", tag="4")]
+    pub operation: i32,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
@@ -38,7 +38,39 @@ pub struct Supply {
     /// Name
     #[prost(string, tag="4")]
     pub issuer: ::prost::alloc::string::String,
-    #[prost(bool, tag="5")]
-    pub is_deleted: bool,
+    #[prost(enumeration="Operation", tag="5")]
+    pub operation: i32,
+}
+#[derive(Clone, Copy, Debug, PartialEq, Eq, Hash, PartialOrd, Ord, ::prost::Enumeration)]
+#[repr(i32)]
+pub enum Operation {
+    Unknown = 0,
+    Insert = 1,
+    Update = 2,
+    Remove = 3,
+}
+impl Operation {
+    /// String value of the enum field names used in the ProtoBuf definition.
+    ///
+    /// The values are not transformed in any way and thus are considered stable
+    /// (if the ProtoBuf definition does not change) and safe for programmatic use.
+    pub fn as_str_name(&self) -> &'static str {
+        match self {
+            Operation::Unknown => "OPERATION_UNKNOWN",
+            Operation::Insert => "OPERATION_INSERT",
+            Operation::Update => "OPERATION_UPDATE",
+            Operation::Remove => "OPERATION_REMOVE",
+        }
+    }
+    /// Creates an enum from field names used in the ProtoBuf definition.
+    pub fn from_str_name(value: &str) -> ::core::option::Option<Self> {
+        match value {
+            "OPERATION_UNKNOWN" => Some(Self::Unknown),
+            "OPERATION_INSERT" => Some(Self::Insert),
+            "OPERATION_UPDATE" => Some(Self::Update),
+            "OPERATION_REMOVE" => Some(Self::Remove),
+            _ => None,
+        }
+    }
 }
 // @@protoc_insertion_point(module)

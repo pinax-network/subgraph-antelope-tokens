@@ -3,9 +3,6 @@ type Balance @entity {
   owner:              String!
   balance:            BigDecimal!
 
-  # delete mutations
-  is_deleted:         Boolean!
-
   # derivedFrom
   block:              Block!
   token:              Token!
@@ -16,9 +13,6 @@ type Supply @entity {
   supply:             BigDecimal!
   max_supply:         BigDecimal!
   issuer:             String!
-
-  # delete mutations
-  is_deleted:         Boolean!
 
   # derivedFrom
   block:              Block!

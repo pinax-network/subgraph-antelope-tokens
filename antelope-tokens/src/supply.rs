@@ -1,5 +1,4 @@
 use antelope::{Asset, ExtendedSymbol, Name};
-use substreams_antelope::pb::db_op::Operation;
 use substreams_antelope::pb::DbOp;
 
 use crate::{
@@ -12,7 +11,6 @@ use crate::{
 pub fn insert_supply(events: &mut Events, db_op: &DbOp) -> Option<ExtendedSymbol> {
     // db_op
     let code = Name::from(db_op.code.as_str());
-    let is_deleted = db_op.operation() == Operation::Remove;
 
     // parse Assets
     let old_supply = parse_json_asset(&db_op.old_data_json, "supply");
@@ -39,7 +37,7 @@ pub fn insert_supply(events: &mut Events, db_op: &DbOp) -> Option<ExtendedSymbol
         supply: supply.value().to_string(),
         max_supply: max_supply.value().to_string(),
         issuer: issuer.to_string(),
-        is_deleted,
+        operation: db_op.operation() as i32,
     });
 
     return Some(token);

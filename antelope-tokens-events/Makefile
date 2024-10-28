@@ -15,4 +15,4 @@ cache:
 
 .PHONY: gui
 gui:
-	substreams gui substreams.yaml -e eos.substreams.pinax.network:443 map_events -s 100000000 --production-mode
+	substreams gui substreams.yaml -e eos.substreams.pinax.network:443 map_events -s 2 -t 0 --production-mode

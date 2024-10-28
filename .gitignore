@@ -17,7 +17,8 @@ localblocks
 rpc-cache
 localdata
 *.spkg
-!block-index/*.spkg
+!antelope-tokens-block-index/*.spkg
+!antelope-tokens-events/*.spkg
 !imports/*.spkg
 *.parquet
 

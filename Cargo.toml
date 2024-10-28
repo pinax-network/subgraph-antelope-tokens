@@ -1,5 +1,9 @@
 [workspace]
-members = ["block-index", "antelope-tokens", "antelope-tokens-events"]
+members = [
+    "antelope-tokens",
+    "antelope-tokens-block-index",
+    "antelope-tokens-events",
+]
 resolver = "2"
 
 [workspace.package]

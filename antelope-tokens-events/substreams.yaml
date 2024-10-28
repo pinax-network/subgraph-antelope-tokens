@@ -5,7 +5,7 @@ package:
   url: https://github.com/pinax-network/subgraph-antelope-tokens
 
 imports:
-  block_index: ../block-index/antelope-tokens-block-index-v0.1.0.spkg
+  block_index: ../antelope-tokens-block-index/antelope-tokens-block-index-v0.1.0.spkg
   entity_changes: https://github.com/streamingfast/substreams-sink-entity-changes/releases/download/v2.0.0/substreams-entity-change-v2.0.0.spkg
 
 protobuf:

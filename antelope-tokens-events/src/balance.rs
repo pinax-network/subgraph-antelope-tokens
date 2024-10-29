@@ -6,7 +6,7 @@ use substreams_antelope::pb::DbOp;
 
 // https://github.com/pinax-network/firehose-antelope/blob/534ca5bf2aeda67e8ef07a1af8fc8e0fe46473ee/proto/sf/antelope/type/v1/type.proto#L702
 // https://github.com/eosnetworkfoundation/eos-system-contracts/blob/8ecd1ac6d312085279cafc9c1a5ade6affc886da/contracts/eosio.token/include/eosio.token/eosio.token.hpp#L156-L160
-pub fn insert_balance(events: &mut Events, db_op: &DbOp) -> Option<ExtendedSymbol> {
+pub fn insert_balance(events: &mut Events, db_op: &DbOp) {
     // db_op
     let code = Name::from(db_op.code.as_str());
     let owner = Name::from(db_op.scope.as_str());
@@ -17,12 +17,12 @@ pub fn insert_balance(events: &mut Events, db_op: &DbOp) -> Option<ExtendedSymbo
 
     // no valid Accounts
     if old_balance.is_none() && new_balance.is_none() {
-        return None;
+        return;
     }
 
     // if modified & balance has not changed, ignore
     if db_op.operation() == Operation::Update && old_balance == new_balance {
-        return None;
+        return;
     }
 
     // fields derived from old_balance or new_balance
@@ -38,6 +38,4 @@ pub fn insert_balance(events: &mut Events, db_op: &DbOp) -> Option<ExtendedSymbo
         balance: balance.value().to_string(),
         operation: db_op.operation() as i32,
     });
-
-    return Some(token);
 }

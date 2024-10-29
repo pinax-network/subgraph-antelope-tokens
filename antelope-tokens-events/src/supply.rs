@@ -8,7 +8,7 @@ use crate::{
 
 // https://github.com/pinax-network/firehose-antelope/blob/534ca5bf2aeda67e8ef07a1af8fc8e0fe46473ee/proto/sf/antelope/type/v1/type.proto#L702
 // https://github.com/eosnetworkfoundation/eos-system-contracts/blob/8ecd1ac6d312085279cafc9c1a5ade6affc886da/contracts/eosio.token/include/eosio.token/eosio.token.hpp#L162-L168
-pub fn insert_supply(events: &mut Events, db_op: &DbOp) -> Option<ExtendedSymbol> {
+pub fn insert_supply(events: &mut Events, db_op: &DbOp) {
     // db_op
     let code = Name::from(db_op.code.as_str());
 
@@ -20,7 +20,7 @@ pub fn insert_supply(events: &mut Events, db_op: &DbOp) -> Option<ExtendedSymbol
 
     // no valid Assets
     if old_supply.is_none() && new_supply.is_none() {
-        return None;
+        return;
     }
 
     // fields derived from old_balance or new_balance
@@ -39,6 +39,4 @@ pub fn insert_supply(events: &mut Events, db_op: &DbOp) -> Option<ExtendedSymbol
         issuer: issuer.to_string(),
         operation: db_op.operation() as i32,
     });
-
-    return Some(token);
 }

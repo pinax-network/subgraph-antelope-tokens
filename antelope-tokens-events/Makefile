@@ -11,8 +11,8 @@ build:
 
 .PHONY: cache
 cache:
-	substreams-sink-noop eos.substreams.pinax.network:443 substreams.yaml map_events 2:
+	substreams-sink-noop kylin.substreams.pinax.network:443 substreams.yaml map_events 2:
 
 .PHONY: gui
 gui:
-	substreams gui substreams.yaml -e eos.substreams.pinax.network:443 map_events -s 2 -t 0 --production-mode
+	substreams gui substreams.yaml -e kylin.substreams.pinax.network:443 map_events -s 100000000

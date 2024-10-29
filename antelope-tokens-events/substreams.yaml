@@ -12,7 +12,7 @@ protobuf:
   files:
     - v1/events.proto
   importPaths:
-    - ./proto
+    - ../proto
   excludePaths:
     - sf/substreams/rpc
     - sf/substrea

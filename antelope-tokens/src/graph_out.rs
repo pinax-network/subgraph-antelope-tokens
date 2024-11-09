@@ -1,7 +1,7 @@
 use std::collections::HashSet;
 use std::str::FromStr;
 
-use antelope::ExtendedSymbol;
+use antelope::{ExtendedSymbol, Symbol};
 use antelope_tokens_events::pb::antelope::tokens::v1::Events;
 use substreams::errors::Error;
 use substreams::matches_keys_in_parsed_expr;
@@ -10,61 +10,70 @@ use substreams_antelope::pb::db_op::Operation;
 use substreams_entity_change::pb::entity::EntityChanges;
 use substreams_entity_change::tables::Tables;
 
+fn to_float64(amount: i64, sym: Symbol) -> f64 {
+    amount as f64 / 10_f64.powi(sym.precision() as i32)
+}
+
 #[substreams::handlers::map]
 pub fn graph_out(params: String, clock: Clock, events: Events) -> Result<EntityChanges, Error> {
     let mut tables = Tables::new();
     let mut tokens = HashSet::new();
 
     // TABLE::Balance
-    for balance in events.balance_events {
-        if !match_token(&params, &balance.token) {
+    for event in events.balance_events {
+        if !match_token(&params, &event.token) {
             continue;
         }
-        let key = format!("{}:{}", balance.token, balance.owner);
+        let key = format!("{}:{}", event.token, event.owner);
+        let ext_sym = ExtendedSymbol::from_str(&event.token).expect("invalid token ExtendedSymbol");
+        let sym = ext_sym.get_symbol();
+        let balance = to_float64(event.balance, sym);
         // INSERT
-        if balance.operation == Operation::Insert as i32 {
+        if event.operation == Operation::Insert.as_str_name() {
             tables
                 .create_row("Balance", &key)
                 // deriveFrom
                 .set("block", clock.id.as_str())
-                .set("token", balance.token.as_str())
+                .set("token", event.token.as_str())
                 // balance
-                .set("owner", balance.owner.to_string())
-                .set_bigdecimal("balance", &balance.balance.to_string());
+                .set("owner", event.owner.to_string())
+                .set_bigdecimal("balance", &balance.to_string());
         }
         // UPDATE
-        else if balance.operation == Operation::Update as i32 {
-            tables.update_row("Balance", &key).set_bigdecimal("balance", &balance.balance.to_string());
+        else if event.operation == Operation::Update.as_str_name() {
+            tables.update_row("Balance", &key).set_bigdecimal("balance", &balance.to_string());
         }
         // DELETE
-        else if balance.operation == Operation::Remove as i32 {
+        else if event.operation == Operation::Remove.as_str_name() {
             tables.delete_row("Balance", &key);
         }
-        tokens.insert(balance.token);
+        tokens.insert(event.token);
     }
 
     // TABLE::Supply
-    for supply in events.supply_events {
-        if !match_token(&params, &supply.token) {
+    for event in events.supply_events {
+        if !match_token(&params, &event.token) {
             continue;
         }
-        let ext_sym = ExtendedSymbol::from_str(&supply.token).expect("invalid token ExtendedSymbol");
+        let ext_sym = ExtendedSymbol::from_str(&event.token).expect("invalid token ExtendedSymbol");
         let sym = ext_sym.get_symbol();
+        let supply = to_float64(event.supply, sym);
+        let max_supply = to_float64(event.max_supply, sym);
         // INSERT
-        if supply.operation == Operation::Insert as i32 {
+        if event.operation == Operation::Insert.as_str_name() {
             tables
-                .create_row("Supply", supply.token.as_str())
+                .create_row("Supply", event.token.as_str())
                 // deriveFrom
                 .set("block", clock.id.as_str())
-                .set("token", supply.token.as_str())
+                .set("token", event.token.as_str())
                 // supply
-                .set_bigdecimal("supply", &supply.supply.to_string())
-                .set_bigdecimal("max_supply", &supply.max_supply.to_string())
-                .set("issuer", &supply.issuer.to_string());
+                .set_bigdecimal("supply", &supply.to_string())
+                .set_bigdecimal("max_supply", &max_supply.to_string())
+                .set("issuer", &event.issuer.to_string());
 
             // TABLE::Token
             tables
-                .create_row("Token", supply.token)
+                .create_row("Token", event.token)
                 // deriveFrom
                 .set("block", clock.id.as_str())
                 // token
@@ -73,15 +82,15 @@ pub fn graph_out(params: String, clock: Clock, events: Events) -> Result<EntityC
                 .set("sym", sym.to_string())
                 .set_bigint_or_zero("precision", &sym.precision().to_string());
         // UPDATE
-        } else if supply.operation == Operation::Update as i32 {
+        } else if event.operation == Operation::Update.as_str_name() {
             tables
-                .update_row("Supply", supply.token.as_str())
-                .set_bigdecimal("supply", &supply.supply.to_string())
-                .set_bigdecimal("max_supply", &supply.max_supply.to_string())
-                .set("issuer", &supply.issuer.to_string());
+                .update_row("Supply", event.token.as_str())
+                .set_bigdecimal("supply", &supply.to_string())
+                .set_bigdecimal("max_supply", &max_supply.to_string())
+                .set("issuer", &event.issuer.to_string());
         // DELETE
-        } else if supply.operation == Operation::Remove as i32 {
-            tables.delete_row("Supply", supply.token.as_str());
+        } else if event.operation == Operation::Remove.as_str_name() {
+            tables.delete_row("Supply", event.token.as_str());
         }
     }
 

@@ -9,6 +9,10 @@ build:
 	substreams info
 	substreams graph
 
+.PHONY: protogen
+protogen:
+	substreams protogen
+
 .PHONY: cache
 cache:
 	substreams-sink-noop kylin.substreams.pinax.network:443 substreams.yaml map_events 2:

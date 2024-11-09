@@ -11,34 +11,54 @@ pub struct Events {
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Balance {
+    /// block
+    #[prost(message, optional, tag="1")]
+    pub block_time: ::core::option::Option<::prost_types::Timestamp>,
+    #[prost(uint64, tag="2")]
+    pub block_number: u64,
+    #[prost(string, tag="3")]
+    pub block_hash: ::prost::alloc::string::String,
+    /// balance
+    ///
     /// ExtendedSymbol
-    #[prost(string, tag="1")]
+    #[prost(string, tag="4")]
     pub token: ::prost::alloc::string::String,
     /// Name
-    #[prost(string, tag="2")]
+    #[prost(string, tag="5")]
     pub owner: ::prost::alloc::string::String,
-    /// Asset
-    #[prost(string, tag="3")]
-    pub balance: ::prost::alloc::string::String,
-    #[prost(int32, tag="4")]
-    pub operation: i32,
+    /// Asset.amount
+    #[prost(int64, tag="6")]
+    pub balance: i64,
+    /// db_op::Operation
+    #[prost(string, tag="7")]
+    pub operation: ::prost::alloc::string::String,
 }
 #[allow(clippy::derive_partial_eq_without_eq)]
 #[derive(Clone, PartialEq, ::prost::Message)]
 pub struct Supply {
-    /// ExtendedSymbol
-    #[prost(string, tag="1")]
-    pub token: ::prost::alloc::string::String,
-    /// Asset
-    #[prost(string, tag="2")]
-    pub supply: ::prost::alloc::string::String,
-    /// Asset
+    /// block
+    #[prost(message, optional, tag="1")]
+    pub block_time: ::core::option::Option<::prost_types::Timestamp>,
+    #[prost(uint64, tag="2")]
+    pub block_number: u64,
     #[prost(string, tag="3")]
-    pub max_supply: ::prost::alloc::string::String,
-    /// Name
+    pub block_hash: ::prost::alloc::string::String,
+    /// supply
+    ///
+    /// ExtendedSymbol
     #[prost(string, tag="4")]
+    pub token: ::prost::alloc::string::String,
+    /// Asset.amount
+    #[prost(int64, tag="5")]
+    pub supply: i64,
+    /// Asset.amount
+    #[prost(int64, tag="6")]
+    pub max_supply: i64,
+    /// Name
+    #[prost(string, tag="7")]
     pub issuer: ::prost::alloc::string::String,
-    #[prost(int32, tag="5")]
-    pub operation: i32,
+    /// db_op::Operation
+    #[prost(string, tag="8")]
+    pub operation: ::prost::alloc::string::String,
 }
 // @@protoc_insertion_point(module)

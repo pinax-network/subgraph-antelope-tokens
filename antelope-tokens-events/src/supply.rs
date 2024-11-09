@@ -1,4 +1,5 @@
 use antelope::{Asset, ExtendedSymbol, Name};
+use substreams::pb::substreams::Clock;
 use substreams_antelope::pb::DbOp;
 
 use crate::{
@@ -8,7 +9,7 @@ use crate::{
 
 // https://github.com/pinax-network/firehose-antelope/blob/534ca5bf2aeda67e8ef07a1af8fc8e0fe46473ee/proto/sf/antelope/type/v1/type.proto#L702
 // https://github.com/eosnetworkfoundation/eos-system-contracts/blob/8ecd1ac6d312085279cafc9c1a5ade6affc886da/contracts/eosio.token/include/eosio.token/eosio.token.hpp#L162-L168
-pub fn insert_supply(events: &mut Events, db_op: &DbOp) {
+pub fn insert_supply(clock: &Clock, events: &mut Events, db_op: &DbOp) {
     // db_op
     let code = Name::from(db_op.code.as_str());
 
@@ -33,10 +34,13 @@ pub fn insert_supply(events: &mut Events, db_op: &DbOp) {
 
     // Supply
     events.supply_events.push(Supply {
+        block_time: clock.timestamp,
+        block_number: clock.number,
+        block_hash: clock.id.to_string(),
         token: token.to_string(),
-        supply: supply.value().to_string(),
-        max_supply: max_supply.value().to_string(),
+        supply: supply.amount,
+        max_supply: max_supply.amount,
         issuer: issuer.to_string(),
-        operation: db_op.operation() as i32,
+        operation: db_op.operation().as_str_name().to_string(),
     });
 }

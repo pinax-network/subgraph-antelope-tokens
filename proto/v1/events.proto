@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 package antelope.tokens.v1;
+import "google/protobuf/timestamp.proto";
 
 message Events {
   repeated Balance balance_events = 1;
@@ -8,16 +9,28 @@ message Events {
 }
 
 message Balance {
-  string token = 1; // ExtendedSymbol
-  string owner = 2; // Name
-  string balance = 3; // Asset
-  int32 operation = 4; // db_op::Operation
+  // block
+  google.protobuf.Timestamp block_time = 1;
+  uint64 block_number = 2;
+  string block_hash = 3;
+
+  // balance
+  string token = 4; // ExtendedSymbol
+  string owner = 5; // Name
+  int64 balance = 6; // Asset.amount
+  string operation = 7; // db_op::Operation
 }
 
 message Supply {
-  string token = 1; // ExtendedSymbol
-  string supply = 2; // Asset
-  string max_supply = 3; // Asset
-  string issuer = 4; // Name
-  int32 operation = 5; // db_op::Operation
+  // block
+  google.protobuf.Timestamp block_time = 1;
+  uint64 block_number = 2;
+  string block_hash = 3;
+
+  // supply
+  string token = 4; // ExtendedSymbol
+  int64 supply = 5; // Asset.amount
+  int64 max_supply = 6; // Asset.amount
+  string issuer = 7; // Name
+  string operation = 8; // db_op::Operation
 }

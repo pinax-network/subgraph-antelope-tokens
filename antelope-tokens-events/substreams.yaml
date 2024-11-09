@@ -32,6 +32,7 @@ modules:
   - name: map_events
     kind: map
     inputs:
+      - source: sf.substreams.v1.Clock
       - map: block_index:map_db_ops
     output:
       type: proto:antelope.tokens.v1.Events

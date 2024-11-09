@@ -16,3 +16,11 @@ cache:
 .PHONY: gui
 gui:
 	substreams gui substreams.yaml -e kylin.substreams.pinax.network:443 map_events -s 100000000
+
+.PHONY: parquet
+parquet:
+	substreams-sink-files run eos.substreams.pinax.network:443 substreams.yaml map_events 2:
+
+.PHONY: schema
+schema:
+	substreams-sink-files tools parquet schema substreams.yaml map_events

@@ -7,18 +7,11 @@ message Events {
   repeated Supply supply_events = 2;
 }
 
-enum Operation {
-  OPERATION_UNKNOWN = 0;
-  OPERATION_INSERT = 1;
-  OPERATION_UPDATE = 2;
-  OPERATION_REMOVE = 3;
-}
-
 message Balance {
   string token = 1; // ExtendedSymbol
   string owner = 2; // Name
   string balance = 3; // Asset
-  Operation operation = 4;
+  int32 operation = 4; // db_op::Operation
 }
 
 message Supply {
@@ -26,5 +19,5 @@ message Supply {
   string supply = 2; // Asset
   string max_supply = 3; // Asset
   string issuer = 4; // Name
-  Operation operation = 5;
+  int32 operation = 5; // db_op::Operation
 }

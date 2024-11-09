@@ -2,10 +2,11 @@ use std::collections::HashSet;
 use std::str::FromStr;
 
 use antelope::ExtendedSymbol;
-use antelope_tokens_events::pb::antelope::tokens::v1::{Events, Operation};
+use antelope_tokens_events::pb::antelope::tokens::v1::Events;
 use substreams::errors::Error;
 use substreams::matches_keys_in_parsed_expr;
 use substreams::pb::substreams::Clock;
+use substreams_antelope::pb::db_op::Operation;
 use substreams_entity_change::pb::entity::EntityChanges;
 use substreams_entity_change::tables::Tables;
 

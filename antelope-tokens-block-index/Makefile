@@ -14,4 +14,4 @@ cache:
 
 .PHONY: gui
 gui:
-	substreams gui substreams.yaml -e wax.substreams.pinax.network:443 map_db_ops -s -20000 -t 0
+	substreams gui substreams.yaml -e kylin.substreams.pinax.network:443 map_db_ops -s 4452494

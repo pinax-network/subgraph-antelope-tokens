@@ -22,8 +22,16 @@ pub fn insert_balance(clock: &Clock, events: &mut Events, db_op: &DbOp) {
     }
 
     // if modified & balance has not changed, ignore
-    if db_op.operation() == Operation::Update && old_balance == new_balance {
-        return;
+    if db_op.operation() == Operation::Update {
+        // token contract which have different symbols, ignore changes
+        if old_balance.expect("missing old_balance").symbol != new_balance.expect("missing new_balance").symbol {
+            return;
+        }
+
+        // same balance
+        if old_balance == new_balance {
+            return;
+        }
     }
 
     // fields derived from old_balance or new_balance

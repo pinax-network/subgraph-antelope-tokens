@@ -1,16 +1,14 @@
-[workspace]
-members = [
-    "antelope-tokens",
-    "antelope-tokens-block-index",
-    "antelope-tokens-events",
-]
-resolver = "2"
-
-[workspace.package]
+[package]
+name = "antelope-tokens"
 edition = "2021"
 version = "0.0.0"
 
-[workspace.dependencies]
+[lib]
+crate-type = ["cdylib"]
+
+[dependencies]
+prost = "0.13"
+substreams-database-change = "2"
 substreams-entity-change = "2"
 substreams-antelope = "0.6"
 substreams = "0.6"
